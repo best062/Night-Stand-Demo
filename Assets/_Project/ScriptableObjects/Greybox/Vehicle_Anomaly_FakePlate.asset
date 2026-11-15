@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebfce2d30650edc4481638a14c8142ff, type: 3}
+  m_Name: Vehicle_Anomaly_FakePlate
+  m_EditorClassIdentifier: Assembly-CSharp::NightStand.Data.VehicleDataSO
+  frontLicensePlate: "\u0E01\u0E02-1234"
+  rearLicensePlate: XX-9999
+  vehicleModel: Sedan
+  vehicleColorName: Dark Red
+  vehicleColor: {r: 0.45, g: 0.1, b: 0.1, a: 1}
+  npcData: {fileID: 11400000, guid: 5fc20ea28c9a0cc4ca3dd76acf88639b, type: 2}

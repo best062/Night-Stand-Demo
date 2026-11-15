@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebfce2d30650edc4481638a14c8142ff, type: 3}
+  m_Name: Vehicle_Normal_Somchai
+  m_EditorClassIdentifier: Assembly-CSharp::NightStand.Data.VehicleDataSO
+  frontLicensePlate: "\u0E01\u0E02-1234"
+  rearLicensePlate: "\u0E01\u0E02-1234"
+  vehicleModel: Sedan
+  vehicleColorName: White
+  vehicleColor: {r: 0.88, g: 0.88, b: 0.9, a: 1}
+  npcData: {fileID: 11400000, guid: edd4f6227116c3d4cb26263759a4a64b, type: 2}
