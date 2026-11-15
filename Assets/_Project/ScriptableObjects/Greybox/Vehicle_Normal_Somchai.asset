@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebfce2d30650edc4481638a14c8142ff, type: 3}
   m_Name: Vehicle_Normal_Somchai
   m_EditorClassIdentifier: Assembly-CSharp::NightStand.Data.VehicleDataSO
-  frontLicensePlate: "\u0E01\u0E02-1234"
-  rearLicensePlate: "\u0E01\u0E02-1234"
+  frontLicensePlate: AB-1234
+  rearLicensePlate: AB-1234
   vehicleModel: Sedan
   vehicleColorName: White
   vehicleColor: {r: 0.88, g: 0.88, b: 0.9, a: 1}

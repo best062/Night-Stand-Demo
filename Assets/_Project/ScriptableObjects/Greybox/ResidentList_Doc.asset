@@ -12,16 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4249e70d1efb1254fbf93acc23e632f9, type: 3}
   m_Name: ResidentList_Doc
   m_EditorClassIdentifier: Assembly-CSharp::NightStand.Data.DocumentDataSO
-  documentTitle: "\u0E23\u0E32\u0E22\u0E0A\u0E37\u0E48\u0E2D\u0E25\u0E39\u0E01\u0E1A\u0E49\u0E32\u0E19 (Resident List)"
+  documentTitle: Resident List
   documentType: 0
   documentSprite: {fileID: 0}
-  bodyText: "\u0E15\u0E23\u0E27\u0E08\u0E2A\u0E2D\u0E1A\u0E0A\u0E37\u0E48\u0E2D \u0E1A\u0E49\u0E32\u0E19\u0E40\u0E25\u0E02\u0E17\u0E35\u0E48 \u0E41\u0E25\u0E30\u0E17\u0E30\u0E40\u0E1A\u0E35\u0E22\u0E19\u0E23\u0E16\u0E43\u0E2B\u0E49\u0E15\u0E23\u0E07\u0E01\u0E31\u0E19\u0E01\u0E48\u0E2D\u0E19\u0E40\u0E1B\u0E34\u0E14\u0E44\u0E21\u0E49\u0E01\u0E31\u0E49\u0E19:"
+  bodyText: 'Verify driver name, house number, and license plate before opening the gate:'
   residentRecords:
-  - residentName: "\u0E2A\u0E21\u0E0A\u0E32\u0E22 \u0E43\u0E08\u0E14\u0E35"
+  - residentName: Somchai Jaidee
     houseNumber: 101/4
-    licensePlate: "\u0E01\u0E02-1234"
-    vehicleInfo: "Sedan \u0E2A\u0E35\u0E02\u0E32\u0E27"
-  - residentName: "\u0E27\u0E34\u0E20\u0E32 \u0E23\u0E31\u0E01\u0E2A\u0E07\u0E1A"
+    licensePlate: AB-1234
+    vehicleInfo: White Sedan
+  - residentName: Wipa Raksangob
     houseNumber: 102/8
-    licensePlate: "\u0E02\u0E04-5678"
-    vehicleInfo: "SUV \u0E2A\u0E35\u0E14\u0E33"
+    licensePlate: CD-5678
+    vehicleInfo: Black SUV

@@ -317,37 +317,37 @@ namespace NightStand.Editor
             // Resident List Document
             residentListDoc = CreateOrLoadSO<DocumentDataSO>("ResidentList_Doc.asset");
             SerializedObject docSO = new SerializedObject(residentListDoc);
-            docSO.FindProperty("documentTitle").stringValue = "รายชื่อลูกบ้าน (Resident List)";
+            docSO.FindProperty("documentTitle").stringValue = "Resident List";
             docSO.FindProperty("documentType").enumValueIndex = (int)DocumentType.ResidentList;
-            docSO.FindProperty("bodyText").stringValue = "ตรวจสอบชื่อ บ้านเลขที่ และทะเบียนรถให้ตรงกันก่อนเปิดไม้กั้น:";
+            docSO.FindProperty("bodyText").stringValue = "Verify driver name, house number, and license plate before opening the gate:";
             SerializedProperty recordsProp = docSO.FindProperty("residentRecords");
             recordsProp.ClearArray();
-            AddResidentRecord(recordsProp, 0, "สมชาย ใจดี", "101/4", "กข-1234", "Sedan สีขาว");
-            AddResidentRecord(recordsProp, 1, "วิภา รักสงบ", "102/8", "ขค-5678", "SUV สีดำ");
+            AddResidentRecord(recordsProp, 0, "Somchai Jaidee", "101/4", "AB-1234", "White Sedan");
+            AddResidentRecord(recordsProp, 1, "Wipa Raksangob", "102/8", "CD-5678", "Black SUV");
             docSO.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(residentListDoc);
 
             // Item Data SOs
-            flashlightData = CreateItemSO("Item_Flashlight.asset", "Flashlight", ItemType.Flashlight, "ไฟฉายสำหรับส่องจุดอับในรถ");
-            keyData = CreateItemSO("Item_Key.asset", "Cabinet Key", ItemType.Key, "กุญแจสำหรับไขตู้เอกสารหรือท้ายรถ");
-            eliminatorData = CreateItemSO("Item_Eliminator.asset", "Anomaly Eliminator", ItemType.Eliminator, "อุปกรณ์กำจัด Anomaly (ห้ามใช้กับคนปกติ)");
+            flashlightData = CreateItemSO("Item_Flashlight.asset", "Flashlight", ItemType.Flashlight, "Flashlight for inspecting dark spots inside vehicles.");
+            keyData = CreateItemSO("Item_Key.asset", "Cabinet Key", ItemType.Key, "Key for unlocking the booth cabinet or vehicle trunks.");
+            eliminatorData = CreateItemSO("Item_Eliminator.asset", "Anomaly Eliminator", ItemType.Eliminator, "Device to eliminate Anomalies. Never use on innocent civilians.");
 
             // Sample Normal NPC & Vehicle
             NPCDataSO normalNpc = CreateOrLoadSO<NPCDataSO>("NPC_Normal_Somchai.asset");
             SerializedObject nNpcSO = new SerializedObject(normalNpc);
-            nNpcSO.FindProperty("npcName").stringValue = "สมชาย ใจดี";
+            nNpcSO.FindProperty("npcName").stringValue = "Somchai Jaidee";
             nNpcSO.FindProperty("status").enumValueIndex = (int)NPCStatus.Normal_Valid;
             nNpcSO.FindProperty("houseNumber").stringValue = "101/4";
-            nNpcSO.FindProperty("greetingDialogue").stringValue = "สวัสดีครับรปภ. ผมสมชายครับ ขอเข้าหมู่บ้านหน่อย";
-            nNpcSO.FindProperty("identityResponse").stringValue = "ผมชื่อสมชาย ใจดี อยู่บ้านเลขที่ 101/4 ครับ";
-            nNpcSO.FindProperty("purposeResponse").stringValue = "เพิ่งกลับจากซื้อของที่ตลาดครับ";
+            nNpcSO.FindProperty("greetingDialogue").stringValue = "Good evening officer. I'm Somchai, heading home.";
+            nNpcSO.FindProperty("identityResponse").stringValue = "My name is Somchai Jaidee. I live at house 101/4.";
+            nNpcSO.FindProperty("purposeResponse").stringValue = "Just got back from grocery shopping.";
             nNpcSO.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(normalNpc);
 
             VehicleDataSO normalVehicle = CreateOrLoadSO<VehicleDataSO>("Vehicle_Normal_Somchai.asset");
             SerializedObject nVehSO = new SerializedObject(normalVehicle);
-            nVehSO.FindProperty("frontLicensePlate").stringValue = "กข-1234";
-            nVehSO.FindProperty("rearLicensePlate").stringValue = "กข-1234";
+            nVehSO.FindProperty("frontLicensePlate").stringValue = "AB-1234";
+            nVehSO.FindProperty("rearLicensePlate").stringValue = "AB-1234";
             nVehSO.FindProperty("vehicleModel").stringValue = "Sedan";
             nVehSO.FindProperty("vehicleColorName").stringValue = "White";
             nVehSO.FindProperty("vehicleColor").colorValue = new Color(0.88f, 0.88f, 0.9f);
@@ -360,31 +360,31 @@ namespace NightStand.Editor
             SerializedObject anomSO = new SerializedObject(fakePlateAnomaly);
             anomSO.FindProperty("anomalyName").stringValue = "Fake Plate / Intruder";
             anomSO.FindProperty("appearWave").enumValueIndex = (int)GameWave.Wave1;
-            anomSO.FindProperty("vehicleClue").stringValue = "ป้ายทะเบียนหน้าและหลังไม่ตรงกัน!";
+            anomSO.FindProperty("vehicleClue").stringValue = "Front and rear license plates do not match!";
             anomSO.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(fakePlateAnomaly);
 
             NPCDataSO anomalyNpc = CreateOrLoadSO<NPCDataSO>("NPC_Anomaly_FakePlate.asset");
             SerializedObject aNpcSO = new SerializedObject(anomalyNpc);
-            aNpcSO.FindProperty("npcName").stringValue = "สมชาย (ตัวปลอม)";
+            aNpcSO.FindProperty("npcName").stringValue = "Somchai (Impostor)";
             aNpcSO.FindProperty("status").enumValueIndex = (int)NPCStatus.Anomaly;
             aNpcSO.FindProperty("anomalyData").objectReferenceValue = fakePlateAnomaly;
             aNpcSO.FindProperty("houseNumber").stringValue = "101/4";
-            aNpcSO.FindProperty("greetingDialogue").stringValue = "รีบเปิดไม้กั้นให้หน่อยสิ...";
-            aNpcSO.FindProperty("identityResponse").stringValue = "ก็... สมชาย บ้าน 101/4 ไง ถามมากจัง";
-            aNpcSO.FindProperty("purposeResponse").stringValue = "กลับบ้าน... แค่จะเข้าหมู่บ้าน";
+            aNpcSO.FindProperty("greetingDialogue").stringValue = "Hurry up and open the gate...";
+            aNpcSO.FindProperty("identityResponse").stringValue = "I'm... Somchai, house 101/4. Stop asking questions.";
+            aNpcSO.FindProperty("purposeResponse").stringValue = "Going home... just let me in.";
             SerializedProperty suspProp = aNpcSO.FindProperty("suspiciousResponses");
             suspProp.ClearArray();
             suspProp.InsertArrayElementAtIndex(0);
-            suspProp.GetArrayElementAtIndex(0).stringValue = "ทะเบียนหลังหลุดมั้ง! อย่ามายุ่งกับรถผม!";
+            suspProp.GetArrayElementAtIndex(0).stringValue = "Maybe the rear plate fell off! Mind your own business!";
             suspProp.InsertArrayElementAtIndex(1);
-            suspProp.GetArrayElementAtIndex(1).stringValue = "เปิดประตูเดี๋ยวนี้!!";
+            suspProp.GetArrayElementAtIndex(1).stringValue = "OPEN THE GATE NOW!!";
             aNpcSO.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(anomalyNpc);
 
             VehicleDataSO anomalyVehicle = CreateOrLoadSO<VehicleDataSO>("Vehicle_Anomaly_FakePlate.asset");
             SerializedObject aVehSO = new SerializedObject(anomalyVehicle);
-            aVehSO.FindProperty("frontLicensePlate").stringValue = "กข-1234";
+            aVehSO.FindProperty("frontLicensePlate").stringValue = "AB-1234";
             aVehSO.FindProperty("rearLicensePlate").stringValue = "XX-9999";
             aVehSO.FindProperty("vehicleModel").stringValue = "Sedan";
             aVehSO.FindProperty("vehicleColorName").stringValue = "Dark Red";
@@ -399,23 +399,23 @@ namespace NightStand.Editor
             mainQuest = CreateOrLoadSO<QuestDataSO>("Quest_Main_SurviveShift.asset");
             SerializedObject mqSO = new SerializedObject(mainQuest);
             mqSO.FindProperty("questId").stringValue = "main_shift";
-            mqSO.FindProperty("questTitle").stringValue = "อยู่เวรคัดกรองจนถึง 06:00 น.";
+            mqSO.FindProperty("questTitle").stringValue = "Survive the Night Shift (18:00 - 06:00)";
             mqSO.FindProperty("category").enumValueIndex = (int)QuestCategory.MainQuest;
-            mqSO.FindProperty("description").stringValue = "ตรวจรถทุกคันและห้ามปล่อย Anomaly เข้าหมู่บ้านเด็ดขาด";
-            mqSO.FindProperty("partnerIntroMessage").stringValue = "เข้ากะแล้วนะ ตรวจเอกสารและป้ายทะเบียนให้ดี ฉันจะคอยสแตนด์บายทางวิทยุ";
-            mqSO.FindProperty("partnerCompleteMessage").stringValue = "06:00 น. แล้ว! ทำได้ดีมาก";
+            mqSO.FindProperty("description").stringValue = "Inspect every vehicle and do not let any Anomaly enter the village.";
+            mqSO.FindProperty("partnerIntroMessage").stringValue = "Shift started. Check documents and plates carefully. I am on standby on the radio.";
+            mqSO.FindProperty("partnerCompleteMessage").stringValue = "06:00 AM! Shift complete. Great job!";
             mqSO.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(mainQuest);
 
             sideQuest = CreateOrLoadSO<QuestDataSO>("Quest_Side_UnlockLocker.asset");
             SerializedObject sqSO = new SerializedObject(sideQuest);
             sqSO.FindProperty("questId").stringValue = "sq_locker";
-            sqSO.FindProperty("questTitle").stringValue = "ใช้กุญแจ (ช่อง 2) ไขตู้ล็อกเกอร์ในป้อม";
+            sqSO.FindProperty("questTitle").stringValue = "Unlock Booth Locker with Key (Slot 2)";
             sqSO.FindProperty("category").enumValueIndex = (int)QuestCategory.SideQuest;
             sqSO.FindProperty("triggerWave").enumValueIndex = (int)GameWave.Wave1;
-            sqSO.FindProperty("description").stringValue = "กดเลข 2 ถือ Key แล้วคลิกซ้ายที่ตู้ล็อกเกอร์ในป้อมยาม";
-            sqSO.FindProperty("partnerIntroMessage").stringValue = "ลองใช้กุญแจช่อง 2 ไขตู้ล็อกเกอร์ในป้อมดูสิ ฉันฝากของสำรองไว้ให้";
-            sqSO.FindProperty("partnerCompleteMessage").stringValue = "เยี่ยม! ฉันส่งอุปกรณ์ปราบ Anomaly เพิ่มไปวางบนโต๊ะแล้ว";
+            sqSO.FindProperty("description").stringValue = "Press 2 to equip Key and Left-Click the locked cabinet inside the booth.";
+            sqSO.FindProperty("partnerIntroMessage").stringValue = "Try using your Key (Slot 2) on the booth locker. I left backup gear inside.";
+            sqSO.FindProperty("partnerCompleteMessage").stringValue = "Nice! I sent an extra Anomaly Eliminator to your desk.";
             sqSO.FindProperty("rewardDeskSpawnIndex").intValue = 2;
             sqSO.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(sideQuest);
@@ -1068,7 +1068,7 @@ namespace NightStand.Editor
             GameObject docPanel = CreatePanel(canvasObj.transform, "DocumentPanel", new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(680f, 520f), new Color(0.12f, 0.12f, 0.14f, 0.96f));
             TMP_Text docTitle = CreateTMP(docPanel.transform, "DocTitle", "Document", new Vector2(0.5f, 1f), new Vector2(0f, -40f), new Vector2(600f, 50f), 28, TextAlignmentOptions.Center);
             TMP_Text docBody = CreateTMP(docPanel.transform, "DocBody", "", new Vector2(0.5f, 0.5f), new Vector2(0f, 10f), new Vector2(600f, 340f), 20, TextAlignmentOptions.TopLeft);
-            Button docClose = CreateButton(docPanel.transform, "CloseDocBtn", "ปิดเอกสาร (ESC)", new Vector2(0f, -210f), new Vector2(200f, 45f));
+            Button docClose = CreateButton(docPanel.transform, "CloseDocBtn", "Close (ESC)", new Vector2(0f, -210f), new Vector2(200f, 45f));
             DocumentViewerUI docViewer = canvasObj.AddComponent<DocumentViewerUI>();
             SerializedObject dvSO = new SerializedObject(docViewer);
             dvSO.FindProperty("panelRoot").objectReferenceValue = docPanel;
@@ -1082,10 +1082,10 @@ namespace NightStand.Editor
             GameObject dlgPanel = CreatePanel(canvasObj.transform, "DialoguePanel", new Vector2(0.5f, 0f), new Vector2(0f, 180f), new Vector2(820f, 300f), new Color(0.08f, 0.09f, 0.12f, 0.94f));
             TMP_Text npcName = CreateTMP(dlgPanel.transform, "NPCName", "NPC", new Vector2(0f, 1f), new Vector2(220f, -35f), new Vector2(380f, 40f), 26, TextAlignmentOptions.Left);
             TMP_Text dlgBody = CreateTMP(dlgPanel.transform, "DialogueBody", "...", new Vector2(0.5f, 1f), new Vector2(0f, -95f), new Vector2(760f, 90f), 22, TextAlignmentOptions.TopLeft);
-            Button btnIdentity = CreateButton(dlgPanel.transform, "Btn_Identity", "ถามชื่อ / บ้านเลขที่", new Vector2(-270f, -95f), new Vector2(180f, 45f));
-            Button btnPurpose = CreateButton(dlgPanel.transform, "Btn_Purpose", "ถามจุดประสงค์", new Vector2(-80f, -95f), new Vector2(180f, 45f));
-            Button btnSuspicious = CreateButton(dlgPanel.transform, "Btn_Suspicious", "ถามจี้จุดพิรุธ", new Vector2(110f, -95f), new Vector2(180f, 45f));
-            Button btnCloseDlg = CreateButton(dlgPanel.transform, "Btn_CloseDlg", "จบการสนทนา", new Vector2(300f, -95f), new Vector2(160f, 45f));
+            Button btnIdentity = CreateButton(dlgPanel.transform, "Btn_Identity", "Ask Name / House", new Vector2(-270f, -95f), new Vector2(180f, 45f));
+            Button btnPurpose = CreateButton(dlgPanel.transform, "Btn_Purpose", "Ask Purpose", new Vector2(-80f, -95f), new Vector2(180f, 45f));
+            Button btnSuspicious = CreateButton(dlgPanel.transform, "Btn_Suspicious", "Press Suspicion", new Vector2(110f, -95f), new Vector2(180f, 45f));
+            Button btnCloseDlg = CreateButton(dlgPanel.transform, "Btn_CloseDlg", "End Talk", new Vector2(300f, -95f), new Vector2(160f, 45f));
             DialogueUI dlgUI = canvasObj.AddComponent<DialogueUI>();
             SerializedObject dlSO = new SerializedObject(dlgUI);
             dlSO.FindProperty("panelRoot").objectReferenceValue = dlgPanel;
@@ -1103,7 +1103,7 @@ namespace NightStand.Editor
             TMP_Text endTitle = CreateTMP(endPanel.transform, "EndingTitle", "SHIFT COMPLETE", new Vector2(0.5f, 1f), new Vector2(0f, -55f), new Vector2(700f, 60f), 36, TextAlignmentOptions.Center);
             TMP_Text endDesc = CreateTMP(endPanel.transform, "EndingDesc", "", new Vector2(0.5f, 0.5f), new Vector2(0f, 60f), new Vector2(680f, 120f), 22, TextAlignmentOptions.Center);
             TMP_Text endStats = CreateTMP(endPanel.transform, "EndingStats", "", new Vector2(0.5f, 0.5f), new Vector2(0f, -65f), new Vector2(680f, 140f), 20, TextAlignmentOptions.Center);
-            Button restartBtn = CreateButton(endPanel.transform, "RestartBtn", "เล่นใหม่อีกครั้ง", new Vector2(0f, -185f), new Vector2(220f, 50f));
+            Button restartBtn = CreateButton(endPanel.transform, "RestartBtn", "Restart Shift", new Vector2(0f, -185f), new Vector2(220f, 50f));
             SerializedObject emSO = new SerializedObject(endingManager);
             emSO.FindProperty("gameManager").objectReferenceValue = gameManager;
             emSO.FindProperty("playerController").objectReferenceValue = playerController;

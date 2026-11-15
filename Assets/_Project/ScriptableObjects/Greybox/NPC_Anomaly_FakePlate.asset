@@ -12,17 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f181289b2b9606848af415be4b0fd315, type: 3}
   m_Name: NPC_Anomaly_FakePlate
   m_EditorClassIdentifier: Assembly-CSharp::NightStand.Data.NPCDataSO
-  npcName: "\u0E2A\u0E21\u0E0A\u0E32\u0E22 (\u0E15\u0E31\u0E27\u0E1B\u0E25\u0E2D\u0E21)"
+  npcName: Somchai (Impostor)
   portrait: {fileID: 0}
   status: 2
   anomalyData: {fileID: 11400000, guid: 46ee31e15efe19e4c9377631bac60ea3, type: 2}
   invalidReason: 
   normalDialogues: []
   houseNumber: 101/4
-  greetingDialogue: "\u0E23\u0E35\u0E1A\u0E40\u0E1B\u0E34\u0E14\u0E44\u0E21\u0E49\u0E01\u0E31\u0E49\u0E19\u0E43\u0E2B\u0E49\u0E2B\u0E19\u0E48\u0E2D\u0E22\u0E2A\u0E34..."
-  identityResponse: "\u0E01\u0E47... \u0E2A\u0E21\u0E0A\u0E32\u0E22 \u0E1A\u0E49\u0E32\u0E19 101/4 \u0E44\u0E07 \u0E16\u0E32\u0E21\u0E21\u0E32\u0E01\u0E08\u0E31\u0E07"
-  purposeResponse: "\u0E01\u0E25\u0E31\u0E1A\u0E1A\u0E49\u0E32\u0E19... \u0E41\u0E04\u0E48\u0E08\u0E30\u0E40\u0E02\u0E49\u0E32\u0E2B\u0E21\u0E39\u0E48\u0E1A\u0E49\u0E32\u0E19"
+  greetingDialogue: Hurry up and open the gate...
+  identityResponse: I'm... Somchai, house 101/4. Stop asking questions.
+  purposeResponse: Going home... just let me in.
   suspiciousResponses:
-  - "\u0E17\u0E30\u0E40\u0E1A\u0E35\u0E22\u0E19\u0E2B\u0E25\u0E31\u0E07\u0E2B\u0E25\u0E38\u0E14\u0E21\u0E31\u0E49\u0E07! \u0E2D\u0E22\u0E48\u0E32\u0E21\u0E32\u0E22\u0E38\u0E48\u0E07\u0E01\u0E31\u0E1A\u0E23\u0E16\u0E1C\u0E21!"
-  - "\u0E40\u0E1B\u0E34\u0E14\u0E1B\u0E23\u0E30\u0E15\u0E39\u0E40\u0E14\u0E35\u0E4B\u0E22\u0E27\u0E19\u0E35\u0E49!!"
+  - Maybe the rear plate fell off! Mind your own business!
+  - OPEN THE GATE NOW!!
   suspiciousJumpscareClip: {fileID: 0}

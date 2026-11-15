@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebfce2d30650edc4481638a14c8142ff, type: 3}
   m_Name: Vehicle_Anomaly_FakePlate
   m_EditorClassIdentifier: Assembly-CSharp::NightStand.Data.VehicleDataSO
-  frontLicensePlate: "\u0E01\u0E02-1234"
+  frontLicensePlate: AB-1234
   rearLicensePlate: XX-9999
   vehicleModel: Sedan
   vehicleColorName: Dark Red

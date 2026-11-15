@@ -15,6 +15,6 @@ MonoBehaviour:
   itemName: Cabinet Key
   itemType: 2
   icon: {fileID: 0}
-  description: "\u0E01\u0E38\u0E0D\u0E41\u0E08\u0E2A\u0E33\u0E2B\u0E23\u0E31\u0E1A\u0E44\u0E02\u0E15\u0E39\u0E49\u0E40\u0E2D\u0E01\u0E2A\u0E32\u0E23\u0E2B\u0E23\u0E37\u0E2D\u0E17\u0E49\u0E32\u0E22\u0E23\u0E16"
+  description: Key for unlocking the booth cabinet or vehicle trunks.
   equippedPrefab: {fileID: 0}
   worldPrefab: {fileID: 0}

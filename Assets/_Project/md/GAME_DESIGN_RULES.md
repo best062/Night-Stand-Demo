@@ -84,3 +84,7 @@
 2. **Data-Driven Design:** ใช้ `ScriptableObject` สำหรับสร้างข้อมูล `VehicleDataSO`, `NPCDataSO`, `AnomalyDataSO`, `QuestDataSO`, และ `ItemDataSO` เพื่อให้ทีมสามารถเพิ่มเคสใหม่ๆ ใน Inspector ได้โดยไม่ต้องแก้โค้ด
 3. **Unity 6 Input & URP:** ใช้ Unity New Input System (หรือมาตรฐาน Input ที่ตั้งค่าใน Unity 6) และจัดการแสง/Post-Processing (เช่น จังหวะตัดจอดำหรือ Jumpscare) ให้รองรับ URP
 4. **Clear Setup Instructions:** ทุกครั้งที่สร้างหรือแก้ไขสคริปต์ C# ให้สรุปขั้นตอนการสร้าง GameObject, การลากใส่ Component และการผูก Reference ใน Unity Inspector แบบกระชับท้ายคำตอบเสมอ
+
+## 6. UI & TextMeshPro Localization Constraint (IMPORTANT)
+- **Language Policy (English Only for In-Game UI):** โปรเจกต์นี้ติดตั้งเฉพาะ **TextMeshPro (TMP) Default Font Asset** เท่านั้น และ **ยังไม่มีฟอนต์ภาษาไทย (No Thai Font Asset)**
+- **Strict Rule for AI:** ข้อความทั้งหมดที่แสดงผลในเกมผ่าน `TMP_Text` หรือ UI (เช่น บทสนทนา NPC, รายละเอียดในเอกสาร/บัตรผ่าน, ชื่อ Quest, ข้อความวิทยุจากเพื่อน AI, ปุ่มกด และหน้าจอ Ending) **ต้องเขียนเป็นภาษาอังกฤษ (English) เท่านั้น** ห้ามใส่ข้อความภาษาไทยลงใน C# String, ScriptableObject หรือ UI Text เด็ดขาด เพื่อป้องกันปัญหาฟอนต์ไม่รองรับและแสดงผลเป็นสี่เหลี่ยม (`□□□`)
