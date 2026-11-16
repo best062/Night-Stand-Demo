@@ -25,3 +25,19 @@ MonoBehaviour:
     houseNumber: 102/8
     licensePlate: CD-5678
     vehicleInfo: Black SUV
+  - residentName: Anan Sukjai
+    houseNumber: 105/2
+    licensePlate: EF-9012
+    vehicleInfo: Blue Sedan
+  - residentName: Nida Chaiyaporn
+    houseNumber: 108/1
+    licensePlate: GH-3456
+    vehicleInfo: Silver Hatchback
+  - residentName: Thana Boonsri
+    houseNumber: 110/5
+    licensePlate: MN-4321
+    vehicleInfo: Red Pickup
+  - residentName: Ploy Srisuk
+    houseNumber: 112/7
+    licensePlate: PQ-8765
+    vehicleInfo: Cream Compact

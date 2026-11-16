@@ -61,4 +61,15 @@ namespace NightStand.Data
         GatePass,
         Memo
     }
+
+    /// <summary>
+    /// หมวดหมู่ของ Anomaly (คนผิดปกติ / ตัวรถผิดปกติ / ทั้งคู่)
+    /// </summary>
+    public enum AnomalyCategory
+    {
+        None,
+        NPC_Anomaly,
+        Vehicle_Anomaly,
+        Hybrid_Anomaly
+    }
 }

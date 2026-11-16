@@ -108,6 +108,39 @@ namespace NightStand.Core
             }
         }
 
+        public void AdminSetTimeScale(float scale)
+        {
+            debugTimeScale = Mathf.Clamp(scale, 0.1f, 20f);
+        }
+
+        public void AdminSetWave(GameWave targetWave)
+        {
+            float targetInGameMinutes = targetWave switch
+            {
+                GameWave.Wave1 => 0f,
+                GameWave.Wave2 => Wave2StartInGameMinutes,
+                GameWave.Wave3 => Wave3StartInGameMinutes,
+                _ => 0f
+            };
+
+            elapsedRealSeconds = (targetInGameMinutes / TotalInGameMinutes) * shiftDurationSeconds;
+            lastReportedTotalMinute = -1;
+            HasShiftEnded = false;
+            UpdateTimeState(targetInGameMinutes);
+            SetWave(targetWave, forceNotify: true);
+        }
+
+        public void AdminJumpNearShiftEnd()
+        {
+            float targetMinutes = TotalInGameMinutes - 5f; // 05:55 AM
+            elapsedRealSeconds = (targetMinutes / TotalInGameMinutes) * shiftDurationSeconds;
+            lastReportedTotalMinute = -1;
+            HasShiftEnded = false;
+            IsRunning = true;
+            UpdateTimeState(targetMinutes);
+            EvaluateWaveTransition(targetMinutes);
+        }
+
         private void UpdateTimeState(float inGameMinutesElapsed)
         {
             int totalMinuteInt = Mathf.Clamp(Mathf.FloorToInt(inGameMinutesElapsed), 0, (int)TotalInGameMinutes);

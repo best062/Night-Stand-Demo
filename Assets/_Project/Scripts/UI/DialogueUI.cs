@@ -38,6 +38,13 @@ namespace NightStand.UI
         private NPCDataSO currentNpc;
         private NPCDialogueInteractable currentInteractable;
 
+        // [Data Structure: N-ary Tree (DialogueTree) - Branching Dialogue State]
+        // Tracks the root tree, current node, and current interrogation depth for the active NPC.
+        // Time Complexity: Node Transition O(1) per branch selection
+        private DialogueTree dialogueTree;
+        private DialogueNode currentNode;
+        private DialogueNode suspiciousNode;
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -89,10 +96,13 @@ namespace NightStand.UI
 
             currentNpc = vehicle.VehicleData.NpcData;
             currentInteractable = interactable;
+            dialogueTree = DialogueTree.BuildFromNPC(currentNpc);
+            currentNode = dialogueTree.Root;
+            suspiciousNode = null;
 
             if (npcNameText != null)
             {
-                npcNameText.text = string.IsNullOrWhiteSpace(currentNpc.NpcName) ? "คนขับรถ" : currentNpc.NpcName;
+                npcNameText.text = string.IsNullOrWhiteSpace(currentNpc.NpcName) ? "Driver" : currentNpc.NpcName;
             }
 
             if (portraitImage != null)
@@ -101,7 +111,7 @@ namespace NightStand.UI
                 portraitImage.gameObject.SetActive(currentNpc.Portrait != null);
             }
 
-            SetDialogueLine(currentNpc.GetGreeting());
+            SetDialogueLine(currentNode != null ? currentNode.ResponseLine : currentNpc.GetGreeting());
 
             if (panelRoot != null)
             {
@@ -130,35 +140,60 @@ namespace NightStand.UI
             }
         }
 
+        // [Operation: Tree Branch Traversal O(1) - Child 0: Identity]
         private void OnAskIdentity()
         {
-            if (currentNpc == null)
+            if (dialogueTree == null || dialogueTree.Root == null)
             {
                 return;
             }
 
-            SetDialogueLine(currentNpc.GetIdentityResponse());
+            currentNode = dialogueTree.Root.GetChild(0);
+            if (currentNode != null)
+            {
+                SetDialogueLine(currentNode.ResponseLine);
+            }
         }
 
+        // [Operation: Tree Branch Traversal O(1) - Child 1: Purpose]
         private void OnAskPurpose()
         {
-            if (currentNpc == null)
+            if (dialogueTree == null || dialogueTree.Root == null)
             {
                 return;
             }
 
-            SetDialogueLine(currentNpc.GetPurposeResponse());
+            currentNode = dialogueTree.Root.GetChild(1);
+            if (currentNode != null)
+            {
+                SetDialogueLine(currentNode.ResponseLine);
+            }
         }
 
+        // [Operation: Subtree Depth Traversal O(1) per click - Child 2 -> Escalation Subtree]
         private void OnAskSuspicious()
         {
-            if (currentNpc == null || currentInteractable == null)
+            if (currentNpc == null || currentInteractable == null || dialogueTree == null || dialogueTree.Root == null)
             {
                 return;
             }
 
             int pressCount = currentInteractable.IncrementSuspiciousPress();
-            SetDialogueLine(currentNpc.GetSuspiciousResponse(pressCount));
+
+            if (suspiciousNode == null)
+            {
+                suspiciousNode = dialogueTree.Root.GetChild(2);
+            }
+            else if (suspiciousNode.Children.Count > 0)
+            {
+                suspiciousNode = suspiciousNode.GetChild(0);
+            }
+
+            currentNode = suspiciousNode;
+            if (currentNode != null)
+            {
+                SetDialogueLine(currentNode.ResponseLine);
+            }
 
             if (pressCount >= 2 && currentNpc.SuspiciousJumpscareClip != null)
             {

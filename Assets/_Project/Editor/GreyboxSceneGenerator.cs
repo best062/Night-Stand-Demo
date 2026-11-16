@@ -90,7 +90,8 @@ namespace NightStand.Editor
                 out VehicleSpawner vehicleSpawner,
                 out AIPartnerManager aiPartnerManager,
                 out JumpscareManager jumpscareManager,
-                out EndingManager endingManager
+                out EndingManager endingManager,
+                out ResidentDatabase residentDatabase
             );
 
             // 5. Security Booth, Desk, Locker, Gate & Buttons
@@ -123,11 +124,13 @@ namespace NightStand.Editor
                 aiPartnerManager,
                 deskSpawner,
                 equipmentManager,
+                residentDatabase,
+                residentListDoc,
                 mainQuest,
                 sideQuest
             );
 
-            // 8. UI Canvas (HUD, DocumentViewer, DialogueUI, ScreenFader, EndingUI)
+            // 8. UI Canvas (HUD, DocumentViewer, DialogueUI, AdminPanel, ScreenFader, EndingUI)
             CreateUICanvas(
                 playerController,
                 equipmentManager,
@@ -135,7 +138,8 @@ namespace NightStand.Editor
                 aiPartnerManager,
                 gameManager,
                 endingManager,
-                jumpscareManager
+                jumpscareManager,
+                vehicleSpawner
             );
 
             string scenePath = $"{ScenesFolder}/GreyboxTestScene.unity";
@@ -324,6 +328,10 @@ namespace NightStand.Editor
             recordsProp.ClearArray();
             AddResidentRecord(recordsProp, 0, "Somchai Jaidee", "101/4", "AB-1234", "White Sedan");
             AddResidentRecord(recordsProp, 1, "Wipa Raksangob", "102/8", "CD-5678", "Black SUV");
+            AddResidentRecord(recordsProp, 2, "Anan Sukjai", "105/2", "EF-9012", "Blue Sedan");
+            AddResidentRecord(recordsProp, 3, "Nida Chaiyaporn", "108/1", "GH-3456", "Silver Hatchback");
+            AddResidentRecord(recordsProp, 4, "Thana Boonsri", "110/5", "MN-4321", "Red Pickup");
+            AddResidentRecord(recordsProp, 5, "Ploy Srisuk", "112/7", "PQ-8765", "Cream Compact");
             docSO.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(residentListDoc);
 
@@ -332,68 +340,237 @@ namespace NightStand.Editor
             keyData = CreateItemSO("Item_Key.asset", "Cabinet Key", ItemType.Key, "Key for unlocking the booth cabinet or vehicle trunks.");
             eliminatorData = CreateItemSO("Item_Eliminator.asset", "Anomaly Eliminator", ItemType.Eliminator, "Device to eliminate Anomalies. Never use on innocent civilians.");
 
-            // Sample Normal NPC & Vehicle
-            NPCDataSO normalNpc = CreateOrLoadSO<NPCDataSO>("NPC_Normal_Somchai.asset");
-            SerializedObject nNpcSO = new SerializedObject(normalNpc);
-            nNpcSO.FindProperty("npcName").stringValue = "Somchai Jaidee";
-            nNpcSO.FindProperty("status").enumValueIndex = (int)NPCStatus.Normal_Valid;
-            nNpcSO.FindProperty("houseNumber").stringValue = "101/4";
-            nNpcSO.FindProperty("greetingDialogue").stringValue = "Good evening officer. I'm Somchai, heading home.";
-            nNpcSO.FindProperty("identityResponse").stringValue = "My name is Somchai Jaidee. I live at house 101/4.";
-            nNpcSO.FindProperty("purposeResponse").stringValue = "Just got back from grocery shopping.";
-            nNpcSO.ApplyModifiedPropertiesWithoutUndo();
-            EditorUtility.SetDirty(normalNpc);
+            sampleVehicles = new List<VehicleDataSO>();
 
-            VehicleDataSO normalVehicle = CreateOrLoadSO<VehicleDataSO>("Vehicle_Normal_Somchai.asset");
-            SerializedObject nVehSO = new SerializedObject(normalVehicle);
-            nVehSO.FindProperty("frontLicensePlate").stringValue = "AB-1234";
-            nVehSO.FindProperty("rearLicensePlate").stringValue = "AB-1234";
-            nVehSO.FindProperty("vehicleModel").stringValue = "Sedan";
-            nVehSO.FindProperty("vehicleColorName").stringValue = "White";
-            nVehSO.FindProperty("vehicleColor").colorValue = new Color(0.88f, 0.88f, 0.9f);
-            nVehSO.FindProperty("npcData").objectReferenceValue = normalNpc;
-            nVehSO.ApplyModifiedPropertiesWithoutUndo();
-            EditorUtility.SetDirty(normalVehicle);
+            // --- 6 Normal (Valid) Village Residents (Each allowed to enter once per shift) ---
+            sampleVehicles.Add(CreateVehicleCase(
+                "Somchai", NPCStatus.Normal_Valid, null, "",
+                "Somchai Jaidee", "101/4",
+                "Good evening officer. I'm Somchai, heading home.",
+                "My name is Somchai Jaidee. I live at house 101/4.",
+                "Just got back from grocery shopping.",
+                null,
+                "AB-1234", "AB-1234", "Sedan", "White", new Color(0.88f, 0.88f, 0.9f)
+            ));
 
-            // Sample Anomaly NPC & Vehicle
-            AnomalyDataSO fakePlateAnomaly = CreateOrLoadSO<AnomalyDataSO>("Anomaly_FakePlate.asset");
-            SerializedObject anomSO = new SerializedObject(fakePlateAnomaly);
-            anomSO.FindProperty("anomalyName").stringValue = "Fake Plate / Intruder";
-            anomSO.FindProperty("appearWave").enumValueIndex = (int)GameWave.Wave1;
-            anomSO.FindProperty("vehicleClue").stringValue = "Front and rear license plates do not match!";
-            anomSO.ApplyModifiedPropertiesWithoutUndo();
-            EditorUtility.SetDirty(fakePlateAnomaly);
+            sampleVehicles.Add(CreateVehicleCase(
+                "Wipa", NPCStatus.Normal_Valid, null, "",
+                "Wipa Raksangob", "102/8",
+                "Hello guard, coming back from night shift.",
+                "Wipa Raksangob, house 102/8.",
+                "Returning home from the hospital.",
+                null,
+                "CD-5678", "CD-5678", "SUV", "Black", new Color(0.14f, 0.14f, 0.17f)
+            ));
 
-            NPCDataSO anomalyNpc = CreateOrLoadSO<NPCDataSO>("NPC_Anomaly_FakePlate.asset");
-            SerializedObject aNpcSO = new SerializedObject(anomalyNpc);
-            aNpcSO.FindProperty("npcName").stringValue = "Somchai (Impostor)";
-            aNpcSO.FindProperty("status").enumValueIndex = (int)NPCStatus.Anomaly;
-            aNpcSO.FindProperty("anomalyData").objectReferenceValue = fakePlateAnomaly;
-            aNpcSO.FindProperty("houseNumber").stringValue = "101/4";
-            aNpcSO.FindProperty("greetingDialogue").stringValue = "Hurry up and open the gate...";
-            aNpcSO.FindProperty("identityResponse").stringValue = "I'm... Somchai, house 101/4. Stop asking questions.";
-            aNpcSO.FindProperty("purposeResponse").stringValue = "Going home... just let me in.";
-            SerializedProperty suspProp = aNpcSO.FindProperty("suspiciousResponses");
-            suspProp.ClearArray();
-            suspProp.InsertArrayElementAtIndex(0);
-            suspProp.GetArrayElementAtIndex(0).stringValue = "Maybe the rear plate fell off! Mind your own business!";
-            suspProp.InsertArrayElementAtIndex(1);
-            suspProp.GetArrayElementAtIndex(1).stringValue = "OPEN THE GATE NOW!!";
-            aNpcSO.ApplyModifiedPropertiesWithoutUndo();
-            EditorUtility.SetDirty(anomalyNpc);
+            sampleVehicles.Add(CreateVehicleCase(
+                "Anan", NPCStatus.Normal_Valid, null, "",
+                "Anan Sukjai", "105/2",
+                "Evening! Busy night at the gate?",
+                "Anan Sukjai, house number 105/2.",
+                "Just finished dinner with family.",
+                null,
+                "EF-9012", "EF-9012", "Sedan", "Blue", new Color(0.18f, 0.35f, 0.68f)
+            ));
 
-            VehicleDataSO anomalyVehicle = CreateOrLoadSO<VehicleDataSO>("Vehicle_Anomaly_FakePlate.asset");
-            SerializedObject aVehSO = new SerializedObject(anomalyVehicle);
-            aVehSO.FindProperty("frontLicensePlate").stringValue = "AB-1234";
-            aVehSO.FindProperty("rearLicensePlate").stringValue = "XX-9999";
-            aVehSO.FindProperty("vehicleModel").stringValue = "Sedan";
-            aVehSO.FindProperty("vehicleColorName").stringValue = "Dark Red";
-            aVehSO.FindProperty("vehicleColor").colorValue = new Color(0.45f, 0.1f, 0.1f);
-            aVehSO.FindProperty("npcData").objectReferenceValue = anomalyNpc;
-            aVehSO.ApplyModifiedPropertiesWithoutUndo();
-            EditorUtility.SetDirty(anomalyVehicle);
+            sampleVehicles.Add(CreateVehicleCase(
+                "Nida", NPCStatus.Normal_Valid, null, "",
+                "Nida Chaiyaporn", "108/1",
+                "Hi officer, please let me through.",
+                "I'm Nida Chaiyaporn at house 108/1.",
+                "Coming home from work.",
+                null,
+                "GH-3456", "GH-3456", "Hatchback", "Silver", new Color(0.68f, 0.7f, 0.74f)
+            ));
 
-            sampleVehicles = new List<VehicleDataSO> { normalVehicle, anomalyVehicle };
+            sampleVehicles.Add(CreateVehicleCase(
+                "Thana", NPCStatus.Normal_Valid, null, "",
+                "Thana Boonsri", "110/5",
+                "Evening! Long drive back tonight.",
+                "Thana Boonsri, house 110/5.",
+                "Returning from a late shift at the warehouse.",
+                null,
+                "MN-4321", "MN-4321", "Pickup", "Red", new Color(0.72f, 0.16f, 0.16f)
+            ));
+
+            sampleVehicles.Add(CreateVehicleCase(
+                "Ploy", NPCStatus.Normal_Valid, null, "",
+                "Ploy Srisuk", "112/7",
+                "Good evening officer, cold night isn't it?",
+                "I'm Ploy Srisuk, living at house 112/7.",
+                "Just got back from visiting my parents.",
+                null,
+                "PQ-8765", "PQ-8765", "Compact", "Cream", new Color(0.92f, 0.87f, 0.72f)
+            ));
+
+            // --- 3 Normal (Invalid - Rare Cases: Must DENY, Do NOT Eliminate!) ---
+            sampleVehicles.Add(CreateVehicleCase(
+                "Invalid_Expired", NPCStatus.Normal_Invalid, null, "Entry pass expired last week.",
+                "Kittipong", "103/9",
+                "Good evening, here to visit my brother.",
+                "Kittipong, visiting house 103/9. Wait... is my pass expired?",
+                "Just dropping off some medicine.",
+                new[] { "Oh no, I forgot to renew my visitor pass! Please don't shoot, just let me turn back." },
+                "JK-7711", "JK-7711", "Sedan", "Gray", new Color(0.45f, 0.46f, 0.5f)
+            ));
+
+            sampleVehicles.Add(CreateVehicleCase(
+                "Invalid_Unregistered", NPCStatus.Normal_Invalid, null, "Rental car plate not registered in Resident List.",
+                "Wipa Raksangob", "102/8",
+                "Hello, I'm driving a rental car tonight.",
+                "Wipa Raksangob, house 102/8. My black SUV is in the repair shop.",
+                "Heading home to rest.",
+                new[] { "I forgot to register this rental plate at the office! I'll turn around." },
+                "LM-2044", "LM-2044", "Sedan", "Green", new Color(0.2f, 0.42f, 0.25f)
+            ));
+
+            sampleVehicles.Add(CreateVehicleCase(
+                "Invalid_TypoPass", NPCStatus.Normal_Invalid, null, "Village name misspelled on pass ('Night Stnad').",
+                "Prasert", "104/6",
+                "Evening officer, here's my temporary guest pass.",
+                "Prasert, visiting house 104/6.",
+                "Dropping off a package for my friend.",
+                new[] { "Wait, the office printed a typo on my pass? Sorry, I'll go get it fixed." },
+                "PR-5521", "PR-5521", "Hatchback", "Silver", new Color(0.68f, 0.7f, 0.74f)
+            ));
+
+            // --- Wave 1 Anomalies (NPC + Vehicle-Type) ---
+            AnomalyDataSO fakePlateAnomaly = CreateAnomalySO("Anomaly_FakePlate.asset", "Fake Plate", GameWave.Wave1, "Front and rear license plates do not match!");
+            sampleVehicles.Add(CreateVehicleCase(
+                "Anom_FakePlate", NPCStatus.Anomaly, fakePlateAnomaly, "",
+                "Somchai (Impostor)", "101/4",
+                "Hurry up and open the gate...",
+                "I'm... Somchai, house 101/4. Stop asking questions.",
+                "Going home... just let me in.",
+                new[] { "Maybe the rear plate fell off! Mind your own business!", "OPEN THE GATE NOW!!" },
+                "AB-1234", "XX-9999", "Sedan", "Dark Red", new Color(0.45f, 0.1f, 0.1f),
+                isVehicleAnomaly: true, anomalyCategory: AnomalyCategory.Hybrid_Anomaly, vehicleAnomalyData: fakePlateAnomaly
+            ));
+
+            AnomalyDataSO hitRunAnomaly = CreateAnomalySO("Anomaly_HitAndRun.asset", "Hit & Run", GameWave.Wave1, "Front bumper has blood stains and heavy damage!");
+            sampleVehicles.Add(CreateVehicleCase(
+                "Anom_HitAndRun", NPCStatus.Anomaly, hitRunAnomaly, "",
+                "Anan Sukjai", "105/2",
+                "Nothing to see here. Let me pass.",
+                "Anan Sukjai, house 105/2.",
+                "Just bought groceries... normal night.",
+                new[] { "That red stain on the bumper? Just... tomato sauce.", "Don't look at the front of my car!" },
+                "EF-9012", "EF-9012", "Sedan", "Blue", new Color(0.18f, 0.35f, 0.68f),
+                isVehicleAnomaly: true, anomalyCategory: AnomalyCategory.Vehicle_Anomaly, vehicleAnomalyData: hitRunAnomaly
+            ));
+
+            // Vehicle-Type Anomaly: Driver acts 100% normal, but the car is the WRONG COLOR for AB-1234!
+            AnomalyDataSO colorMismatchAnomaly = CreateAnomalySO("Anomaly_ColorMismatch.asset", "Color Mismatch Vehicle", GameWave.Wave1, "Resident List says White Sedan for AB-1234, but this car is Matte Black!");
+            sampleVehicles.Add(CreateVehicleCase(
+                "Anom_VehicleColorMismatch", NPCStatus.Normal_Valid, null, "",
+                "Somchai Jaidee", "101/4",
+                "Good evening officer. Everything is normal, right?",
+                "Somchai Jaidee, house 101/4. Same as always.",
+                "Heading home to sleep.",
+                new[] { "My car has always been this color... hasn't it?", "Please check the plate again, it's AB-1234." },
+                "AB-1234", "AB-1234", "Sedan", "Matte Black (Mismatch!)", new Color(0.08f, 0.08f, 0.09f),
+                isVehicleAnomaly: true, anomalyCategory: AnomalyCategory.Vehicle_Anomaly, vehicleAnomalyData: colorMismatchAnomaly
+            ));
+
+            // --- Wave 2 Anomalies ---
+            AnomalyDataSO stowawayAnomaly = CreateAnomalySO("Anomaly_Stowaway.asset", "Stowaway", GameWave.Wave2, "Someone is hiding in the back seat!");
+            sampleVehicles.Add(CreateVehicleCase(
+                "Anom_Stowaway", NPCStatus.Anomaly, stowawayAnomaly, "",
+                "Nervous Driver", "105/2",
+                "Please... open the gate quickly.",
+                "Anan... house 105/2. I'm alone!",
+                "I am completely alone in this car.",
+                new[] { "There's nobody in the back seat! Don't shine your light back there!", "Stop looking inside!!" },
+                "ST-8822", "ST-8822", "Sedan", "Navy", new Color(0.1f, 0.14f, 0.3f),
+                isVehicleAnomaly: true, anomalyCategory: AnomalyCategory.Hybrid_Anomaly, vehicleAnomalyData: stowawayAnomaly
+            ));
+
+            // Vehicle-Type Anomaly: Normal-acting driver, blood leaking from Trunk!
+            AnomalyDataSO trunkBloodAnomaly = CreateAnomalySO("Anomaly_TrunkBlood.asset", "Trunk Blood Leak", GameWave.Wave2, "Blood is leaking from the rear trunk!");
+            sampleVehicles.Add(CreateVehicleCase(
+                "Anom_TrunkBlood", NPCStatus.Normal_Valid, null, "",
+                "Nida Chaiyaporn", "108/1",
+                "Hi officer, long night isn't it?",
+                "Nida Chaiyaporn, house 108/1.",
+                "Just bringing home some meat from the market.",
+                new[] { "Leaking from the trunk? Oh, that must be melted ice.", "No need to inspect the trunk!" },
+                "GH-3456", "GH-3456", "Hatchback", "Silver", new Color(0.68f, 0.7f, 0.74f),
+                isVehicleAnomaly: true, anomalyCategory: AnomalyCategory.Vehicle_Anomaly, vehicleAnomalyData: trunkBloodAnomaly
+            ));
+
+            // Vehicle-Type Anomaly: Possessed Red Headlights
+            AnomalyDataSO redHeadlightsAnomaly = CreateAnomalySO("Anomaly_RedHeadlights.asset", "Possessed Red Headlights", GameWave.Wave2, "Vehicle headlights are glowing unnatural blood-red!");
+            sampleVehicles.Add(CreateVehicleCase(
+                "Anom_RedHeadlights", NPCStatus.Normal_Valid, null, "",
+                "Wipa Raksangob", "102/8",
+                "Evening officer, please open up.",
+                "Wipa Raksangob, house 102/8.",
+                "Returning from night shift.",
+                new[] { "Red headlights? I didn't notice anything strange.", "Please let me drive through." },
+                "CD-5678", "CD-5678", "SUV", "Black", new Color(0.14f, 0.14f, 0.17f),
+                isVehicleAnomaly: true, anomalyCategory: AnomalyCategory.Vehicle_Anomaly, vehicleAnomalyData: redHeadlightsAnomaly
+            ));
+
+            AnomalyDataSO doppelAnomaly = CreateAnomalySO("Anomaly_Doppelganger.asset", "Doppelganger", GameWave.Wave2, "Duplicate resident plate and robotic memorized speech!");
+            sampleVehicles.Add(CreateVehicleCase(
+                "Anom_Doppelganger", NPCStatus.Anomaly, doppelAnomaly, "",
+                "Somchai Jaidee?", "101/4",
+                "GREETINGS. I AM SOMCHAI. HEADING HOME.",
+                "MY NAME IS SOMCHAI JAIDEE. HOUSE 101/4.",
+                "I AM RETURNING FROM GROCERY SHOPPING. NORMAL HUMAN ACTIVITY.",
+                new[] { "NO ERROR. I HAVE NOT ENTERED YET.", "OPEN GATE. OPEN GATE. OPEN GATE." },
+                "AB-1234", "AB-1234", "Sedan", "White", new Color(0.9f, 0.9f, 0.92f),
+                isVehicleAnomaly: false, anomalyCategory: AnomalyCategory.NPC_Anomaly
+            ));
+
+            // --- Wave 3 Anomalies ---
+            AnomalyDataSO ghostDriverAnomaly = CreateAnomalySO("Anomaly_GhostDriver.asset", "Ghost Driver", GameWave.Wave3, "Driver seat is completely empty! Voice comes from the radio.");
+            sampleVehicles.Add(CreateVehicleCase(
+                "Anom_GhostDriver", NPCStatus.Anomaly, ghostDriverAnomaly, "",
+                "Radio Static", "108/1",
+                "*Static* ...Let... us... in...",
+                "*Radio crackle* ...108/1... we live here...",
+                "*Static* ...Going home...",
+                new[] { "*Loud static screech*", "*Radio whispers: You shouldn't have looked inside*" },
+                "GH-0000", "GH-0000", "Sedan", "Black", new Color(0.05f, 0.05f, 0.06f),
+                isVehicleAnomaly: true, anomalyCategory: AnomalyCategory.Hybrid_Anomaly, vehicleAnomalyData: ghostDriverAnomaly
+            ));
+
+            AnomalyDataSO mimicAnomaly = CreateAnomalySO("Anomaly_Mimic.asset", "Mimic", GameWave.Wave3, "Strange dark slime on the vehicle body.");
+            sampleVehicles.Add(CreateVehicleCase(
+                "Anom_Mimic", NPCStatus.Anomaly, mimicAnomaly, "",
+                "Wipa?", "102/8",
+                "Hello... guard... nice night...",
+                "Wipa... 102/8... yes...",
+                "Returning... from... shift...",
+                new[] { "Why are you staring at the slime?", "STOP ASKING QUESTIONS!! *Distorted roar*" },
+                "MM-6666", "MM-6666", "SUV", "Dark Green", new Color(0.08f, 0.22f, 0.12f),
+                isVehicleAnomaly: true, anomalyCategory: AnomalyCategory.Hybrid_Anomaly, vehicleAnomalyData: mimicAnomaly
+            ));
+
+            AnomalyDataSO beastClawAnomaly = CreateAnomalySO("Anomaly_BeastClaw.asset", "Beast Claw Car", GameWave.Wave3, "Deep monster claw marks across the side of the car!");
+            sampleVehicles.Add(CreateVehicleCase(
+                "Anom_BeastClaw", NPCStatus.Normal_Valid, null, "",
+                "Anan Sukjai", "105/2",
+                "Let me in! Hurry!",
+                "Anan, 105/2! Don't ask about the scratches!",
+                "Something chased me on the highway!",
+                new[] { "It's already inside the car... WAIT—", "*Metallic screeching from inside the vehicle*" },
+                "EF-9012", "EF-9012", "Sedan", "Blue", new Color(0.18f, 0.35f, 0.68f),
+                isVehicleAnomaly: true, anomalyCategory: AnomalyCategory.Vehicle_Anomaly, vehicleAnomalyData: beastClawAnomaly
+            ));
+
+            AnomalyDataSO cultAnomaly = CreateAnomalySO("Anomaly_Cult.asset", "The Cult / Intruder", GameWave.Wave3, "No license plates at all!");
+            sampleVehicles.Add(CreateVehicleCase(
+                "Anom_Cult", NPCStatus.Anomaly, cultAnomaly, "",
+                "Masked Stranger", "NONE",
+                "Open the gate.",
+                "Open the gate.",
+                "Open the gate.",
+                new[] { "Open the gate.", "Open the gate." },
+                "NONE", "NONE", "Van", "Pitch Black", new Color(0.03f, 0.03f, 0.03f),
+                isVehicleAnomaly: true, anomalyCategory: AnomalyCategory.Hybrid_Anomaly, vehicleAnomalyData: cultAnomaly
+            ));
 
             // Sample Quests
             mainQuest = CreateOrLoadSO<QuestDataSO>("Quest_Main_SurviveShift.asset");
@@ -419,6 +596,79 @@ namespace NightStand.Editor
             sqSO.FindProperty("rewardDeskSpawnIndex").intValue = 2;
             sqSO.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(sideQuest);
+        }
+
+        private static AnomalyDataSO CreateAnomalySO(string fileName, string anomalyName, GameWave wave, string clue)
+        {
+            AnomalyDataSO asset = CreateOrLoadSO<AnomalyDataSO>(fileName);
+            SerializedObject so = new SerializedObject(asset);
+            so.FindProperty("anomalyName").stringValue = anomalyName;
+            so.FindProperty("appearWave").enumValueIndex = (int)wave;
+            so.FindProperty("vehicleClue").stringValue = clue;
+            so.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(asset);
+            return asset;
+        }
+
+        private static VehicleDataSO CreateVehicleCase(
+            string key,
+            NPCStatus status,
+            AnomalyDataSO anomalyData,
+            string invalidReason,
+            string npcName,
+            string houseNumber,
+            string greeting,
+            string identityResp,
+            string purposeResp,
+            string[] suspiciousResps,
+            string frontPlate,
+            string rearPlate,
+            string model,
+            string colorName,
+            Color color,
+            bool isVehicleAnomaly = false,
+            AnomalyCategory anomalyCategory = AnomalyCategory.None,
+            AnomalyDataSO vehicleAnomalyData = null)
+        {
+            NPCDataSO npc = CreateOrLoadSO<NPCDataSO>($"NPC_{key}.asset");
+            SerializedObject npcSO = new SerializedObject(npc);
+            npcSO.FindProperty("npcName").stringValue = npcName;
+            npcSO.FindProperty("status").enumValueIndex = (int)status;
+            npcSO.FindProperty("anomalyData").objectReferenceValue = anomalyData;
+            npcSO.FindProperty("invalidReason").stringValue = invalidReason;
+            npcSO.FindProperty("houseNumber").stringValue = houseNumber;
+            npcSO.FindProperty("greetingDialogue").stringValue = greeting;
+            npcSO.FindProperty("identityResponse").stringValue = identityResp;
+            npcSO.FindProperty("purposeResponse").stringValue = purposeResp;
+
+            SerializedProperty suspProp = npcSO.FindProperty("suspiciousResponses");
+            suspProp.ClearArray();
+            if (suspiciousResps != null)
+            {
+                for (int i = 0; i < suspiciousResps.Length; i++)
+                {
+                    suspProp.InsertArrayElementAtIndex(i);
+                    suspProp.GetArrayElementAtIndex(i).stringValue = suspiciousResps[i];
+                }
+            }
+            npcSO.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(npc);
+
+            VehicleDataSO vehicle = CreateOrLoadSO<VehicleDataSO>($"Vehicle_{key}.asset");
+            SerializedObject vehSO = new SerializedObject(vehicle);
+            vehSO.FindProperty("frontLicensePlate").stringValue = frontPlate;
+            vehSO.FindProperty("rearLicensePlate").stringValue = rearPlate;
+            vehSO.FindProperty("vehicleModel").stringValue = model;
+            vehSO.FindProperty("vehicleColorName").stringValue = colorName;
+            vehSO.FindProperty("vehicleColor").colorValue = color;
+            vehSO.FindProperty("npcData").objectReferenceValue = npc;
+            vehSO.FindProperty("isVehicleAnomaly").boolValue = isVehicleAnomaly;
+            vehSO.FindProperty("anomalyCategory").enumValueIndex = (int)anomalyCategory;
+            vehSO.FindProperty("vehicleAnomalyData").objectReferenceValue = vehicleAnomalyData;
+            vehSO.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(vehicle);
+
+            return vehicle;
         }
 
         private static ItemDataSO CreateItemSO(string fileName, string itemName, ItemType type, string desc)
@@ -495,6 +745,25 @@ namespace NightStand.Editor
             CreatePrimitiveChild("Head", PrimitiveType.Sphere, stowaway.transform, new Vector3(0f, 0.42f, 0f), new Vector3(0.3f, 0.3f, 0.3f), matBlack);
             stowaway.SetActive(false);
 
+            // Anomaly Visual Props (Hit & Run blood/dent on front bumper + Mimic slime)
+            GameObject hitAndRunStain = CreateBox("HitAndRun_BumperStain", root.transform, new Vector3(0.25f, 0.42f, 2.11f), new Vector3(0.75f, 0.25f, 0.08f), matRed, withCollider: false);
+            hitAndRunStain.SetActive(false);
+
+            GameObject mimicSlime = CreateBox("Mimic_SlimeStain", root.transform, new Vector3(-0.96f, 0.58f, -0.4f), new Vector3(0.06f, 0.38f, 1.3f), matBlack, withCollider: false);
+            mimicSlime.SetActive(false);
+
+            GameObject trunkBlood = CreateBox("Trunk_BloodLeak", root.transform, new Vector3(0f, 0.3f, -2.13f), new Vector3(0.9f, 0.32f, 0.06f), matRed, withCollider: false);
+            trunkBlood.SetActive(false);
+
+            GameObject clawMarks = CreateBox("Beast_ClawMarks", root.transform, new Vector3(-0.96f, 0.72f, 0.4f), new Vector3(0.05f, 0.28f, 1.1f), matRed, withCollider: false);
+            clawMarks.SetActive(false);
+
+            GameObject redHeadlights = new GameObject("RedHeadlights");
+            redHeadlights.transform.SetParent(root.transform);
+            CreatePrimitiveChild("HL_Left", PrimitiveType.Sphere, redHeadlights.transform, new Vector3(-0.65f, 0.6f, 2.11f), new Vector3(0.24f, 0.24f, 0.1f), matRed);
+            CreatePrimitiveChild("HL_Right", PrimitiveType.Sphere, redHeadlights.transform, new Vector3(0.65f, 0.6f, 2.11f), new Vector3(0.24f, 0.24f, 0.1f), matRed);
+            redHeadlights.SetActive(false);
+
             // License Plates (Front & Rear)
             TMP_Text frontPlate = CreateLicensePlate("FrontPlate", root.transform, new Vector3(0f, 0.45f, 2.12f), Quaternion.Euler(0f, 180f, 0f));
             TMP_Text rearPlate = CreateLicensePlate("RearPlate", root.transform, new Vector3(0f, 0.45f, -2.12f), Quaternion.identity);
@@ -530,6 +799,13 @@ namespace NightStand.Editor
             renderersProp.GetArrayElementAtIndex(1).objectReferenceValue = cabin.GetComponent<Renderer>();
             vcSO.FindProperty("frontPlateText").objectReferenceValue = frontPlate;
             vcSO.FindProperty("rearPlateText").objectReferenceValue = rearPlate;
+            vcSO.FindProperty("driverVisual").objectReferenceValue = driver;
+            vcSO.FindProperty("stowawayVisual").objectReferenceValue = stowaway;
+            vcSO.FindProperty("hitAndRunVisual").objectReferenceValue = hitAndRunStain;
+            vcSO.FindProperty("mimicSlimeVisual").objectReferenceValue = mimicSlime;
+            vcSO.FindProperty("trunkBloodVisual").objectReferenceValue = trunkBlood;
+            vcSO.FindProperty("clawMarksVisual").objectReferenceValue = clawMarks;
+            vcSO.FindProperty("redHeadlightsVisual").objectReferenceValue = redHeadlights;
             vcSO.ApplyModifiedPropertiesWithoutUndo();
 
             string prefabPath = $"{PrefabsFolder}/GreyboxVehicle.prefab";
@@ -641,7 +917,8 @@ namespace NightStand.Editor
             out VehicleSpawner vehicleSpawner,
             out AIPartnerManager aiPartnerManager,
             out JumpscareManager jumpscareManager,
-            out EndingManager endingManager)
+            out EndingManager endingManager,
+            out ResidentDatabase residentDatabase)
         {
             GameObject twObj = new GameObject("TimeWaveManager");
             twObj.transform.SetParent(parent);
@@ -694,6 +971,10 @@ namespace NightStand.Editor
             SerializedObject endSO = new SerializedObject(endingManager);
             endSO.FindProperty("audioSource").objectReferenceValue = endAudio;
             endSO.ApplyModifiedPropertiesWithoutUndo();
+
+            GameObject resObj = new GameObject("ResidentDatabase");
+            resObj.transform.SetParent(parent);
+            residentDatabase = resObj.AddComponent<ResidentDatabase>();
         }
 
         private static void CreateSecurityBoothAndGate(
@@ -982,6 +1263,8 @@ namespace NightStand.Editor
             AIPartnerManager aiPartnerManager,
             DeskItemSpawner deskSpawner,
             EquipmentManager equipmentManager,
+            ResidentDatabase residentDatabase,
+            DocumentDataSO residentListDoc,
             QuestDataSO mainQuest,
             QuestDataSO sideQuest)
         {
@@ -995,6 +1278,10 @@ namespace NightStand.Editor
             aiSO.FindProperty("deskItemSpawner").objectReferenceValue = deskSpawner;
             aiSO.FindProperty("equipmentManager").objectReferenceValue = equipmentManager;
             aiSO.ApplyModifiedPropertiesWithoutUndo();
+
+            SerializedObject rdSO = new SerializedObject(residentDatabase);
+            rdSO.FindProperty("residentListDocument").objectReferenceValue = residentListDoc;
+            rdSO.ApplyModifiedPropertiesWithoutUndo();
         }
 
         private static void CreateUICanvas(
@@ -1004,7 +1291,8 @@ namespace NightStand.Editor
             AIPartnerManager aiPartnerManager,
             GameManager gameManager,
             EndingManager endingManager,
-            JumpscareManager jumpscareManager)
+            JumpscareManager jumpscareManager,
+            VehicleSpawner vehicleSpawner)
         {
             GameObject eventSystemObj = new GameObject("EventSystem");
             eventSystemObj.AddComponent<EventSystem>();
@@ -1113,6 +1401,41 @@ namespace NightStand.Editor
             emSO.FindProperty("statsSummaryText").objectReferenceValue = endStats;
             emSO.FindProperty("restartButton").objectReferenceValue = restartBtn;
             emSO.ApplyModifiedPropertiesWithoutUndo();
+
+            // 7b. Admin / Debug Panel (Toggle with F1)
+            CreateTMP(canvasObj.transform, "AdminHintText", "[F1] Admin Panel", new Vector2(1f, 0f), new Vector2(-120f, 30f), new Vector2(220f, 30f), 16, TextAlignmentOptions.Right);
+
+            GameObject adminPanel = CreatePanel(canvasObj.transform, "AdminPanel", new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(880f, 580f), new Color(0.06f, 0.08f, 0.11f, 0.96f));
+            CreateTMP(adminPanel.transform, "AdminHeader", "NIGHT STAND - ADMIN CONTROL PANEL (F1)", new Vector2(0.5f, 1f), new Vector2(0f, -28f), new Vector2(820f, 40f), 22, TextAlignmentOptions.Center);
+            TMP_Text adminStatus = CreateTMP(adminPanel.transform, "AdminLiveStatus", "Loading...", new Vector2(0.5f, 1f), new Vector2(0f, -90f), new Vector2(820f, 80f), 16, TextAlignmentOptions.TopLeft);
+
+            GameObject gridObj = new GameObject("AdminButtonsGrid");
+            gridObj.transform.SetParent(adminPanel.transform, false);
+            RectTransform gridRT = gridObj.AddComponent<RectTransform>();
+            gridRT.anchorMin = new Vector2(0.5f, 0.5f);
+            gridRT.anchorMax = new Vector2(0.5f, 0.5f);
+            gridRT.anchoredPosition = new Vector2(0f, -25f);
+            gridRT.sizeDelta = new Vector2(820f, 340f);
+            GridLayoutGroup grid = gridObj.AddComponent<GridLayoutGroup>();
+            grid.cellSize = new Vector2(195f, 44f);
+            grid.spacing = new Vector2(10f, 10f);
+            grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            grid.constraintCount = 4;
+
+            Button adminCloseBtn = CreateButton(adminPanel.transform, "Btn_CloseAdmin", "Close (F1)", new Vector2(0f, -250f), new Vector2(180f, 42f));
+
+            AdminPanelUI adminUI = canvasObj.AddComponent<AdminPanelUI>();
+            SerializedObject adSO = new SerializedObject(adminUI);
+            adSO.FindProperty("panelRoot").objectReferenceValue = adminPanel;
+            adSO.FindProperty("liveStatusText").objectReferenceValue = adminStatus;
+            adSO.FindProperty("buttonContainer").objectReferenceValue = gridObj.transform;
+            adSO.FindProperty("closeButton").objectReferenceValue = adminCloseBtn;
+            adSO.FindProperty("playerController").objectReferenceValue = playerController;
+            adSO.FindProperty("timeWaveManager").objectReferenceValue = timeWaveManager;
+            adSO.FindProperty("vehicleSpawner").objectReferenceValue = vehicleSpawner;
+            adSO.FindProperty("equipmentManager").objectReferenceValue = equipmentManager;
+            adSO.FindProperty("aiPartnerManager").objectReferenceValue = aiPartnerManager;
+            adSO.ApplyModifiedPropertiesWithoutUndo();
 
             // 8. Horror Flash & Screen Fader (Last in Canvas Hierarchy)
             GameObject flashObj = CreateFullScreenOverlay(canvasObj.transform, "HorrorFlashOverlay", new Color(0.65f, 0f, 0f, 1f));

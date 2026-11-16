@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f181289b2b9606848af415be4b0fd315, type: 3}
+  m_Name: NPC_Anom_Mimic
+  m_EditorClassIdentifier: Assembly-CSharp::NightStand.Data.NPCDataSO
+  npcName: Wipa?
+  portrait: {fileID: 0}
+  status: 2
+  anomalyData: {fileID: 11400000, guid: 27a3fdb66a29ed640acaaaad08d85753, type: 2}
+  invalidReason: 
+  normalDialogues: []
+  houseNumber: 102/8
+  greetingDialogue: Hello... guard... nice night...
+  identityResponse: Wipa... 102/8... yes...
+  purposeResponse: Returning... from... shift...
+  suspiciousResponses:
+  - Why are you staring at the slime?
+  - STOP ASKING QUESTIONS!! *Distorted roar*
+  suspiciousJumpscareClip: {fileID: 0}

@@ -30,7 +30,11 @@
    - `Type` (3p): จำแนกประเภท Entity ที่เข้าป้อมเป็น 3 กลุ่มหลัก:
      1. `Normal (Valid)`: คนปกติ เอกสารถูกต้อง -> **ต้องเปิดไม้กั้นให้ผ่าน (Allow)**
      2. `Normal (Invalid / Rare Case)`: คนปกติ แต่เอกสารมีปัญหา (เช่น บัตรหมดอายุ, ลืมต่อทะเบียน) **โอกาสออกน้อยมากและตรวจจับได้ค่อนข้างยาก** -> **ต้องกดปฏิเสธ/ไล่กลับ (Deny)** *(ห้ามใช้อุปกรณ์ปราบเด็ดขาด)*
-     3. `Anomaly`: สิ่งผิดปกติ/ตัวปลอม -> **ต้องใช้อุปกรณ์ปราบกำจัด (Eliminate)**
+     3. `Anomaly`: สิ่งผิดปกติ/ตัวปลอม -> **ต้องใช้อุปกรณ์ปราบกำจัด (Eliminate)** แบ่งย่อยได้เป็น:
+        - `NPC_Anomaly`: ตัวคนขับ/ผู้โดยสารผิดปกติ (เช่น Doppelgänger, Mimic, Cult)
+        - `Vehicle_Anomaly`: **ตัวรถเองเป็น Anomaly** แม้คนขับจะดูหรือพูดจาปกติ (เช่น รถสี/รุ่นไม่ตรงทะเบียน, คราบเลือดที่กันชน/ท้ายรถ, ไฟหน้าสีแดง, รอยเล็บสัตว์ประหลาด)
+        - `Hybrid_Anomaly`: ผิดปกติทั้งตัวรถและคนขับ
+     - *(Resident Entry Rule)* ลูกบ้าน `Normal Valid` แต่ละคนใน `ResidentList` สามารถผ่านเข้าหมู่บ้านได้เพียง **คนละ 1 ครั้งต่อกะ** (หากมีรถทะเบียนซ้ำขับเข้ามาอีกจะถือเป็น Doppelgänger / Anomaly)
 4. **Item (1 Point)**
    - `Type` (1p): แยกประเภทไอเทมและพฤติกรรมการใช้งานชัดเจน (`Document`, `Flashlight`, `Key`, `Eliminator`)
 
@@ -85,6 +89,3 @@
 3. **Unity 6 Input & URP:** ใช้ Unity New Input System (หรือมาตรฐาน Input ที่ตั้งค่าใน Unity 6) และจัดการแสง/Post-Processing (เช่น จังหวะตัดจอดำหรือ Jumpscare) ให้รองรับ URP
 4. **Clear Setup Instructions:** ทุกครั้งที่สร้างหรือแก้ไขสคริปต์ C# ให้สรุปขั้นตอนการสร้าง GameObject, การลากใส่ Component และการผูก Reference ใน Unity Inspector แบบกระชับท้ายคำตอบเสมอ
 
-## 6. UI & TextMeshPro Localization Constraint (IMPORTANT)
-- **Language Policy (English Only for In-Game UI):** โปรเจกต์นี้ติดตั้งเฉพาะ **TextMeshPro (TMP) Default Font Asset** เท่านั้น และ **ยังไม่มีฟอนต์ภาษาไทย (No Thai Font Asset)**
-- **Strict Rule for AI:** ข้อความทั้งหมดที่แสดงผลในเกมผ่าน `TMP_Text` หรือ UI (เช่น บทสนทนา NPC, รายละเอียดในเอกสาร/บัตรผ่าน, ชื่อ Quest, ข้อความวิทยุจากเพื่อน AI, ปุ่มกด และหน้าจอ Ending) **ต้องเขียนเป็นภาษาอังกฤษ (English) เท่านั้น** ห้ามใส่ข้อความภาษาไทยลงใน C# String, ScriptableObject หรือ UI Text เด็ดขาด เพื่อป้องกันปัญหาฟอนต์ไม่รองรับและแสดงผลเป็นสี่เหลี่ยม (`□□□`)

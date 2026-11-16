@@ -29,12 +29,24 @@ namespace NightStand.Vehicle
         [SerializeField] private TMP_Text frontPlateText;
         [SerializeField] private TMP_Text rearPlateText;
 
+        [Header("Anomaly Visual Props (Optional)")]
+        [SerializeField] private GameObject driverVisual;
+        [SerializeField] private GameObject stowawayVisual;
+        [SerializeField] private GameObject hitAndRunVisual;
+        [SerializeField] private GameObject mimicSlimeVisual;
+        [SerializeField] private GameObject trunkBloodVisual;
+        [SerializeField] private GameObject clawMarksVisual;
+        [SerializeField] private GameObject redHeadlightsVisual;
+
         public event Action<VehicleController> OnArrivedAtGate;
         public event Action<VehicleController> OnVehicleExited;
 
         public VehicleDataSO VehicleData { get; private set; }
         public VehicleState CurrentState { get; private set; } = VehicleState.Approaching;
 
+        // [Data Structure: Array (VehicleWaypoint[]) - Fixed-Size Inspection Waypoints]
+        // Stores all 4 inspection points around the vehicle (Front, DriverWindow, BackSeat, Trunk).
+        // Time Complexity: RefreshWaypoints O(n) where n = number of waypoints on the vehicle (n = 4)
         private VehicleWaypoint[] waypoints;
         private TimeWaveManager timeWaveManager;
         private Vector3 targetPosition;
@@ -194,6 +206,34 @@ namespace NightStand.Vehicle
             {
                 rearPlateText.text = data.RearLicensePlate;
             }
+
+            ApplyAnomalyVisuals(data);
+        }
+
+        private void ApplyAnomalyVisuals(VehicleDataSO data)
+        {
+            AnomalyDataSO effectiveAnomaly = data.EffectiveAnomalyData;
+            string anomalyName = data.IsAnomalyVehicle && effectiveAnomaly != null
+                ? effectiveAnomaly.AnomalyName ?? string.Empty
+                : string.Empty;
+
+            bool isGhostDriver = anomalyName.IndexOf("Ghost", StringComparison.OrdinalIgnoreCase) >= 0;
+            bool isStowaway = anomalyName.IndexOf("Stowaway", StringComparison.OrdinalIgnoreCase) >= 0;
+            bool isHitAndRun = anomalyName.IndexOf("Hit", StringComparison.OrdinalIgnoreCase) >= 0;
+            bool isMimic = anomalyName.IndexOf("Mimic", StringComparison.OrdinalIgnoreCase) >= 0;
+            bool isTrunkBlood = anomalyName.IndexOf("Trunk", StringComparison.OrdinalIgnoreCase) >= 0;
+            bool isClawMarks = anomalyName.IndexOf("Beast", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                               anomalyName.IndexOf("Claw", StringComparison.OrdinalIgnoreCase) >= 0;
+            bool isRedHeadlights = anomalyName.IndexOf("Headlight", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                                   anomalyName.IndexOf("Possessed", StringComparison.OrdinalIgnoreCase) >= 0;
+
+            if (driverVisual != null) driverVisual.SetActive(!isGhostDriver);
+            if (stowawayVisual != null) stowawayVisual.SetActive(isStowaway);
+            if (hitAndRunVisual != null) hitAndRunVisual.SetActive(isHitAndRun);
+            if (mimicSlimeVisual != null) mimicSlimeVisual.SetActive(isMimic);
+            if (trunkBloodVisual != null) trunkBloodVisual.SetActive(isTrunkBlood);
+            if (clawMarksVisual != null) clawMarksVisual.SetActive(isClawMarks);
+            if (redHeadlightsVisual != null) redHeadlightsVisual.SetActive(isRedHeadlights);
         }
 
         private GameWave GetCurrentWave()

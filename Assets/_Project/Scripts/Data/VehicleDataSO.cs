@@ -22,16 +22,41 @@ namespace NightStand.Data
         [Tooltip("ข้อมูล NPC คนขับ/ผู้โดยสารที่ผูกกับรถคันนี้")]
         [SerializeField] private NPCDataSO npcData;
 
+        [Header("Vehicle-Level Anomaly (Optional)")]
+        [Tooltip("เปิดใช้เมื่อตัวรถเองเป็น Anomaly แม้คนขับจะดูปกติก็ตาม")]
+        [SerializeField] private bool isVehicleAnomaly = false;
+        [SerializeField] private AnomalyCategory anomalyCategory = AnomalyCategory.None;
+        [SerializeField] private AnomalyDataSO vehicleAnomalyData;
+
         public string FrontLicensePlate => frontLicensePlate;
         public string RearLicensePlate => rearLicensePlate;
         public string VehicleModel => vehicleModel;
         public string VehicleColorName => vehicleColorName;
         public Color VehicleColor => vehicleColor;
         public NPCDataSO NpcData => npcData;
+        public bool IsVehicleAnomaly => isVehicleAnomaly;
+        public AnomalyCategory AnomalyCategory => anomalyCategory;
+        public AnomalyDataSO VehicleAnomalyData => vehicleAnomalyData;
 
         public bool HasMatchingPlates =>
             string.Equals(frontLicensePlate?.Trim(), rearLicensePlate?.Trim(), StringComparison.OrdinalIgnoreCase);
 
-        public bool IsAnomalyVehicle => npcData != null && npcData.IsAnomaly;
+        public bool IsAnomalyVehicle => isVehicleAnomaly || (npcData != null && npcData.IsAnomaly);
+
+        public NPCStatus EffectiveStatus
+        {
+            get
+            {
+                if (IsAnomalyVehicle)
+                {
+                    return NPCStatus.Anomaly;
+                }
+
+                return npcData != null ? npcData.Status : NPCStatus.Normal_Valid;
+            }
+        }
+
+        public AnomalyDataSO EffectiveAnomalyData =>
+            vehicleAnomalyData != null ? vehicleAnomalyData : (npcData != null ? npcData.AnomalyData : null);
     }
 }

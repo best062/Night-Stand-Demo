@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f181289b2b9606848af415be4b0fd315, type: 3}
+  m_Name: NPC_Anom_Doppelganger
+  m_EditorClassIdentifier: Assembly-CSharp::NightStand.Data.NPCDataSO
+  npcName: Somchai Jaidee?
+  portrait: {fileID: 0}
+  status: 2
+  anomalyData: {fileID: 11400000, guid: a25954b72939ff94ea8c1a099ba9f468, type: 2}
+  invalidReason: 
+  normalDialogues: []
+  houseNumber: 101/4
+  greetingDialogue: GREETINGS. I AM SOMCHAI. HEADING HOME.
+  identityResponse: MY NAME IS SOMCHAI JAIDEE. HOUSE 101/4.
+  purposeResponse: I AM RETURNING FROM GROCERY SHOPPING. NORMAL HUMAN ACTIVITY.
+  suspiciousResponses:
+  - NO ERROR. I HAVE NOT ENTERED YET.
+  - OPEN GATE. OPEN GATE. OPEN GATE.
+  suspiciousJumpscareClip: {fileID: 0}

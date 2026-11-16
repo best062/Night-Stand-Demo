@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebfce2d30650edc4481638a14c8142ff, type: 3}
+  m_Name: Vehicle_Anom_GhostDriver
+  m_EditorClassIdentifier: Assembly-CSharp::NightStand.Data.VehicleDataSO
+  frontLicensePlate: GH-0000
+  rearLicensePlate: GH-0000
+  vehicleModel: Sedan
+  vehicleColorName: Black
+  vehicleColor: {r: 0.05, g: 0.05, b: 0.06, a: 1}
+  npcData: {fileID: 11400000, guid: c573f3b06905bee439b3c5bca9e7a86d, type: 2}
+  isVehicleAnomaly: 1
+  anomalyCategory: 3
+  vehicleAnomalyData: {fileID: 11400000, guid: 5b5d4b8e8c9cbec41a32c94e6898c2a7, type: 2}

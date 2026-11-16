@@ -95,7 +95,7 @@ namespace NightStand.Core
                 return;
             }
 
-            RegisterDecision(vehicle.NpcData.Status, decision);
+            RegisterDecision(vehicle.EffectiveStatus, decision);
         }
 
         /// <summary>
@@ -176,6 +176,21 @@ namespace NightStand.Core
 
             Debug.Log($"[GameManager] Game Ended: {result} | Allowed: {VehiclesAllowedCount}, Mistakes: {MistakeCount}, Infiltrated: {AnomaliesInfiltratedCount}");
             OnGameEnded?.Invoke(result);
+        }
+
+        public void AdminTriggerEnding(GameEndResult result)
+        {
+            if (result == GameEndResult.None)
+            {
+                return;
+            }
+
+            if (result == GameEndResult.Lose_Infiltrated && AnomaliesInfiltratedCount == 0)
+            {
+                AnomaliesInfiltratedCount = 1;
+            }
+
+            EndGame(result);
         }
     }
 }

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f181289b2b9606848af415be4b0fd315, type: 3}
+  m_Name: NPC_Thana
+  m_EditorClassIdentifier: Assembly-CSharp::NightStand.Data.NPCDataSO
+  npcName: Thana Boonsri
+  portrait: {fileID: 0}
+  status: 0
+  anomalyData: {fileID: 0}
+  invalidReason: 
+  normalDialogues: []
+  houseNumber: 110/5
+  greetingDialogue: Evening! Long drive back tonight.
+  identityResponse: Thana Boonsri, house 110/5.
+  purposeResponse: Returning from a late shift at the warehouse.
+  suspiciousResponses: []
+  suspiciousJumpscareClip: {fileID: 0}

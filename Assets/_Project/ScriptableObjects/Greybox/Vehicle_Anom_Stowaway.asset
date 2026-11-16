@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebfce2d30650edc4481638a14c8142ff, type: 3}
+  m_Name: Vehicle_Anom_Stowaway
+  m_EditorClassIdentifier: Assembly-CSharp::NightStand.Data.VehicleDataSO
+  frontLicensePlate: ST-8822
+  rearLicensePlate: ST-8822
+  vehicleModel: Sedan
+  vehicleColorName: Navy
+  vehicleColor: {r: 0.1, g: 0.14, b: 0.3, a: 1}
+  npcData: {fileID: 11400000, guid: 00d5f51108a70414ca0139ef4e8c54c4, type: 2}
+  isVehicleAnomaly: 1
+  anomalyCategory: 3
+  vehicleAnomalyData: {fileID: 11400000, guid: c9ed8aaf3077fb44b9f2f4e5ad9e96a4, type: 2}

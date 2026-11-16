@@ -17,6 +17,10 @@ namespace NightStand.Core
 
         [Header("Quests")]
         [SerializeField] private QuestDataSO mainQuest;
+
+        // [Data Structure: List<QuestDataSO> - Sequential Side Quest List]
+        // Stores side quests assigned by the AI Partner across Waves 1-3.
+        // Time Complexity: TriggerSideQuestForWave / FindQuestById O(n) where n = number of side quests
         [SerializeField] private List<QuestDataSO> sideQuests = new List<QuestDataSO>();
 
         [Header("Dependencies")]
@@ -37,6 +41,9 @@ namespace NightStand.Core
         public QuestDataSO ActiveSideQuest { get; private set; }
         public bool IsMainQuestCompleted { get; private set; }
 
+        // [Data Structure: HashSet<string> - Quest State Tracking]
+        // Tracks started and completed Quest IDs to prevent duplicate triggers/rewards.
+        // Time Complexity: Contains / Add O(1) average
         private readonly HashSet<string> completedQuestIds = new HashSet<string>();
         private readonly HashSet<string> startedQuestIds = new HashSet<string>();
 

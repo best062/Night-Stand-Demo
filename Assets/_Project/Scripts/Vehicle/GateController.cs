@@ -58,6 +58,11 @@ namespace NightStand.Vehicle
                 GameManager.Instance.RegisterVehicleDecision(vehicle.VehicleData, PlayerDecision.Allow);
             }
 
+            if (ResidentDatabase.Instance != null && vehicle.VehicleData != null)
+            {
+                ResidentDatabase.Instance.RegisterVehicleEntry(vehicle.VehicleData.FrontLicensePlate);
+            }
+
             isBarrierOpen = true;
             vehicle.OnVehicleExited += HandleAllowedVehicleExited;
             vehicle.AllowPass(exitPoint);

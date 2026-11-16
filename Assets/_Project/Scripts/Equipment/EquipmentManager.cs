@@ -23,6 +23,9 @@ namespace NightStand.Equipment
         [SerializeField] private Transform playerCamera;
 
         [Header("3 Equipment Slots (1 = Flashlight, 2 = Key, 3 = Eliminator)")]
+        // [Data Structure: List<EquipmentSlot> - Indexed Equipment Inventory]
+        // Holds the player's right-hand equipment slots (1-3) for instant slot switching.
+        // Time Complexity: EquipSlot(index) O(1) random access
         [SerializeField] private List<EquipmentSlot> slots = new List<EquipmentSlot>(3);
         [SerializeField] private int startingSlotIndex = 0;
 

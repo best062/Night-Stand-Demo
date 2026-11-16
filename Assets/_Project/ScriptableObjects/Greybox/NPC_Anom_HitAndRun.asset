@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f181289b2b9606848af415be4b0fd315, type: 3}
+  m_Name: NPC_Anom_HitAndRun
+  m_EditorClassIdentifier: Assembly-CSharp::NightStand.Data.NPCDataSO
+  npcName: Anan Sukjai
+  portrait: {fileID: 0}
+  status: 2
+  anomalyData: {fileID: 11400000, guid: c4c275502db510d4d9570e6c1a7f9618, type: 2}
+  invalidReason: 
+  normalDialogues: []
+  houseNumber: 105/2
+  greetingDialogue: Nothing to see here. Let me pass.
+  identityResponse: Anan Sukjai, house 105/2.
+  purposeResponse: Just bought groceries... normal night.
+  suspiciousResponses:
+  - That red stain on the bumper? Just... tomato sauce.
+  - Don't look at the front of my car!
+  suspiciousJumpscareClip: {fileID: 0}

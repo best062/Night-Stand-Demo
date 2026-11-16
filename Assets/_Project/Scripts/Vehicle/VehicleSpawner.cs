@@ -29,14 +29,23 @@ namespace NightStand.Vehicle
         [Tooltip("โอกาสออก Normal_Invalid (น้อยที่สุด)")]
         [SerializeField, Min(0f)] private float normalInvalidWeight = 10f;
 
-        [Header("Timing")]
+        [Header("Timing & Queue")]
         [SerializeField] private bool spawnOnStart = true;
         [SerializeField, Min(0.2f)] private float spawnDelayBetweenVehicles = 2.0f;
+        [SerializeField, Min(1)] private int queueBufferSize = 3;
+        [Tooltip("หากเปิดไว้ ลูกบ้าน Normal_Valid แต่ละคนจะผ่านเข้าหมู่บ้านได้แค่ 1 ครั้ง (คันเดียว)")]
+        [SerializeField] private bool allowEachValidResidentOnce = true;
 
         [Header("Dependencies")]
         [SerializeField] private TimeWaveManager timeWaveManager;
 
         public VehicleController CurrentVehicle { get; private set; }
+        public int QueuedCount => vehicleQueue.Count;
+
+        // [Data Structure: Queue<VehicleDataSO> - FIFO Vehicle Spawn Queue]
+        // Stores upcoming vehicles in arrival order before spawning at the checkpoint.
+        // Time Complexity: Enqueue O(1), Dequeue O(1)
+        private readonly Queue<VehicleDataSO> vehicleQueue = new Queue<VehicleDataSO>();
 
         private Coroutine pendingSpawnCoroutine;
 
@@ -50,12 +59,28 @@ namespace NightStand.Vehicle
 
         private void Start()
         {
+            EnqueueUpcomingVehicles(queueBufferSize);
+
             if (spawnOnStart)
             {
                 SpawnNextVehicle();
             }
         }
 
+        // [Operation: FIFO Enqueue O(1) per vehicle]
+        public void EnqueueUpcomingVehicles(int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                VehicleDataSO candidate = PickRandomVehicleData();
+                if (candidate != null)
+                {
+                    vehicleQueue.Enqueue(candidate);
+                }
+            }
+        }
+
+        // [Operation: FIFO Dequeue O(1) when spawning the next vehicle to the gate]
         public void SpawnNextVehicle()
         {
             if (!CanSpawn())
@@ -63,12 +88,19 @@ namespace NightStand.Vehicle
                 return;
             }
 
-            VehicleDataSO selectedData = PickRandomVehicleData();
-            if (selectedData == null)
+            if (vehicleQueue.Count == 0)
+            {
+                EnqueueUpcomingVehicles(queueBufferSize);
+            }
+
+            if (vehicleQueue.Count == 0)
             {
                 Debug.LogWarning("[VehicleSpawner] Vehicle Pool is empty! Add VehicleDataSO assets in Inspector.");
                 return;
             }
+
+            VehicleDataSO selectedData = vehicleQueue.Dequeue();
+            EnqueueUpcomingVehicles(1);
 
             Vector3 pos = spawnPoint != null ? spawnPoint.position : transform.position;
             Quaternion rot = spawnPoint != null ? spawnPoint.rotation : transform.rotation;
@@ -79,6 +111,53 @@ namespace NightStand.Vehicle
 
             GameWave currentWave = timeWaveManager != null ? timeWaveManager.CurrentWave : GameWave.Wave1;
             CurrentVehicle.Initialize(selectedData, gateStopPoint, currentWave);
+        }
+
+        public void AdminSpawnVehicleOfStatus(NPCStatus targetStatus)
+        {
+            if (vehiclePrefab == null || vehiclePool == null || vehiclePool.Count == 0)
+            {
+                return;
+            }
+
+            List<VehicleDataSO> matches = new List<VehicleDataSO>();
+            foreach (VehicleDataSO data in vehiclePool)
+            {
+                if (data != null && data.NpcData != null && data.EffectiveStatus == targetStatus)
+                {
+                    matches.Add(data);
+                }
+            }
+
+            if (matches.Count == 0)
+            {
+                Debug.LogWarning($"[VehicleSpawner] No vehicles found with status {targetStatus}.");
+                return;
+            }
+
+            if (CurrentVehicle != null)
+            {
+                CurrentVehicle.OnVehicleExited -= HandleVehicleExited;
+                Destroy(CurrentVehicle.gameObject);
+                CurrentVehicle = null;
+            }
+
+            if (pendingSpawnCoroutine != null)
+            {
+                StopCoroutine(pendingSpawnCoroutine);
+                pendingSpawnCoroutine = null;
+            }
+
+            VehicleDataSO chosen = matches[Random.Range(0, matches.Count)];
+            Vector3 pos = spawnPoint != null ? spawnPoint.position : transform.position;
+            Quaternion rot = spawnPoint != null ? spawnPoint.rotation : transform.rotation;
+
+            VehicleController spawned = Instantiate(vehiclePrefab, pos, rot);
+            CurrentVehicle = spawned;
+            CurrentVehicle.OnVehicleExited += HandleVehicleExited;
+
+            GameWave currentWave = timeWaveManager != null ? timeWaveManager.CurrentWave : GameWave.Wave1;
+            CurrentVehicle.Initialize(chosen, gateStopPoint, currentWave);
         }
 
         private void HandleVehicleExited(VehicleController exitedVehicle)
@@ -151,16 +230,23 @@ namespace NightStand.Vehicle
                     continue;
                 }
 
-                switch (data.NpcData.Status)
+                switch (data.EffectiveStatus)
                 {
                     case NPCStatus.Normal_Valid:
+                        if (allowEachValidResidentOnce &&
+                            ResidentDatabase.Instance != null &&
+                            ResidentDatabase.Instance.IsDoppelganger(data.FrontLicensePlate))
+                        {
+                            // ลูกบ้านคนนี้เข้าไปแล้ว ห้ามสุ่มตัวจริงซ้ำอีก (เหลือแค่ตัวปลอม/Anomaly)
+                            break;
+                        }
                         validNormals.Add(data);
                         break;
                     case NPCStatus.Normal_Invalid:
                         invalidNormals.Add(data);
                         break;
                     case NPCStatus.Anomaly:
-                        AnomalyDataSO anomaly = data.NpcData.AnomalyData;
+                        AnomalyDataSO anomaly = data.EffectiveAnomalyData;
                         if (anomaly == null || (int)anomaly.AppearWave <= (int)currentWave)
                         {
                             waveAnomalies.Add(data);

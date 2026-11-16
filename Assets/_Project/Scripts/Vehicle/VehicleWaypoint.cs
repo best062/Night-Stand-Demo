@@ -129,9 +129,9 @@ namespace NightStand.Vehicle
                     break;
             }
 
-            if (npc != null && npc.IsAnomaly && npc.AnomalyData != null && !string.IsNullOrEmpty(npc.AnomalyData.VehicleClue))
+            if (data.IsAnomalyVehicle && data.EffectiveAnomalyData != null && !string.IsNullOrEmpty(data.EffectiveAnomalyData.VehicleClue))
             {
-                report += $" | Clue Note: {npc.AnomalyData.VehicleClue}";
+                report += $" | Clue Note: {data.EffectiveAnomalyData.VehicleClue}";
             }
 
             Debug.Log(report);

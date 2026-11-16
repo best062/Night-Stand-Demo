@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f181289b2b9606848af415be4b0fd315, type: 3}
+  m_Name: NPC_Anom_Cult
+  m_EditorClassIdentifier: Assembly-CSharp::NightStand.Data.NPCDataSO
+  npcName: Masked Stranger
+  portrait: {fileID: 0}
+  status: 2
+  anomalyData: {fileID: 11400000, guid: bf50862e5bef18d42bfbf73df0b61124, type: 2}
+  invalidReason: 
+  normalDialogues: []
+  houseNumber: NONE
+  greetingDialogue: Open the gate.
+  identityResponse: Open the gate.
+  purposeResponse: Open the gate.
+  suspiciousResponses:
+  - Open the gate.
+  - Open the gate.
+  suspiciousJumpscareClip: {fileID: 0}
