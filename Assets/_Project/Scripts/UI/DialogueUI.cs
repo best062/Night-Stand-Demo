@@ -27,6 +27,8 @@ namespace NightStand.UI
         [SerializeField] private Button askIdentityButton;
         [SerializeField] private Button askPurposeButton;
         [SerializeField] private Button askSuspiciousButton;
+        [SerializeField] private Button passActionButton;
+        [SerializeField] private TMP_Text passActionButtonText;
         [SerializeField] private Button closeButton;
 
         [Header("Audio & Player (Optional)")]
@@ -36,6 +38,7 @@ namespace NightStand.UI
         public bool IsOpen => panelRoot != null && panelRoot.activeSelf;
 
         private NPCDataSO currentNpc;
+        private VehicleController currentVehicle;
         private NPCDialogueInteractable currentInteractable;
 
         // [Data Structure: N-ary Tree (DialogueTree) - Branching Dialogue State]
@@ -63,6 +66,7 @@ namespace NightStand.UI
             if (askIdentityButton != null) askIdentityButton.onClick.AddListener(OnAskIdentity);
             if (askPurposeButton != null) askPurposeButton.onClick.AddListener(OnAskPurpose);
             if (askSuspiciousButton != null) askSuspiciousButton.onClick.AddListener(OnAskSuspicious);
+            if (passActionButton != null) passActionButton.onClick.AddListener(OnPassActionClicked);
             if (closeButton != null) closeButton.onClick.AddListener(CloseDialogue);
 
             if (panelRoot != null)
@@ -76,6 +80,7 @@ namespace NightStand.UI
             if (askIdentityButton != null) askIdentityButton.onClick.RemoveListener(OnAskIdentity);
             if (askPurposeButton != null) askPurposeButton.onClick.RemoveListener(OnAskPurpose);
             if (askSuspiciousButton != null) askSuspiciousButton.onClick.RemoveListener(OnAskSuspicious);
+            if (passActionButton != null) passActionButton.onClick.RemoveListener(OnPassActionClicked);
             if (closeButton != null) closeButton.onClick.RemoveListener(CloseDialogue);
         }
 
@@ -95,10 +100,12 @@ namespace NightStand.UI
             }
 
             currentNpc = vehicle.VehicleData.NpcData;
+            currentVehicle = vehicle;
             currentInteractable = interactable;
             dialogueTree = DialogueTree.BuildFromNPC(currentNpc);
             currentNode = dialogueTree.Root;
             suspiciousNode = null;
+            RefreshPassButtonState();
 
             if (npcNameText != null)
             {
@@ -127,6 +134,7 @@ namespace NightStand.UI
         public void CloseDialogue()
         {
             currentNpc = null;
+            currentVehicle = null;
             currentInteractable = null;
 
             if (panelRoot != null)
@@ -205,6 +213,51 @@ namespace NightStand.UI
                 {
                     audioSource.PlayOneShot(currentNpc.SuspiciousJumpscareClip);
                 }
+            }
+        }
+
+        private void OnPassActionClicked()
+        {
+            if (currentVehicle == null)
+            {
+                return;
+            }
+
+            if (!currentVehicle.HasDriverHandedPass)
+            {
+                currentVehicle.TakePassFromDriver();
+                SetDialogueLine("Here is my entry pass, officer. You can check it on your desk.");
+            }
+            else if (!currentVehicle.HasReturnedPassToDriver)
+            {
+                currentVehicle.ReturnPassToDriver();
+                SetDialogueLine("Thank you, officer. Please let me know your decision.");
+            }
+
+            RefreshPassButtonState();
+        }
+
+        private void RefreshPassButtonState()
+        {
+            if (passActionButton == null || currentVehicle == null)
+            {
+                return;
+            }
+
+            if (!currentVehicle.HasDriverHandedPass)
+            {
+                passActionButton.interactable = true;
+                if (passActionButtonText != null) passActionButtonText.text = "Take Entry Pass";
+            }
+            else if (!currentVehicle.HasReturnedPassToDriver)
+            {
+                passActionButton.interactable = true;
+                if (passActionButtonText != null) passActionButtonText.text = "Return Pass";
+            }
+            else
+            {
+                passActionButton.interactable = false;
+                if (passActionButtonText != null) passActionButtonText.text = "Pass Returned";
             }
         }
 

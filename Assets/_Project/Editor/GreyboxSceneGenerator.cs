@@ -789,6 +789,14 @@ namespace NightStand.Editor
             dSO.FindProperty("vehicleController").objectReferenceValue = vc;
             dSO.ApplyModifiedPropertiesWithoutUndo();
 
+            // Driver Handout Pass (3D card held out at driver window)
+            GameObject handoutPass = CreateBox("DriverPassHandout", root.transform, new Vector3(-1.02f, 1.02f, 0.45f), new Vector3(0.24f, 0.02f, 0.34f), matPaper, withCollider: true);
+            DriverPassInteractable handoutComp = handoutPass.AddComponent<DriverPassInteractable>();
+            SerializedObject hoSO = new SerializedObject(handoutComp);
+            hoSO.FindProperty("vehicleController").objectReferenceValue = vc;
+            hoSO.ApplyModifiedPropertiesWithoutUndo();
+            handoutPass.SetActive(false);
+
             // Wire VehicleController references
             SerializedObject vcSO = new SerializedObject(vc);
             SerializedProperty renderersProp = vcSO.FindProperty("bodyRenderers");
@@ -806,6 +814,7 @@ namespace NightStand.Editor
             vcSO.FindProperty("trunkBloodVisual").objectReferenceValue = trunkBlood;
             vcSO.FindProperty("clawMarksVisual").objectReferenceValue = clawMarks;
             vcSO.FindProperty("redHeadlightsVisual").objectReferenceValue = redHeadlights;
+            vcSO.FindProperty("driverHandoutPassVisual").objectReferenceValue = handoutPass;
             vcSO.ApplyModifiedPropertiesWithoutUndo();
 
             string prefabPath = $"{PrefabsFolder}/GreyboxVehicle.prefab";
@@ -1080,6 +1089,7 @@ namespace NightStand.Editor
             gcSO.FindProperty("exitPoint").objectReferenceValue = exitPoint;
             gcSO.FindProperty("returnPoint").objectReferenceValue = returnPoint;
             gcSO.FindProperty("barrierArm").objectReferenceValue = armPivot.transform;
+            gcSO.FindProperty("openLocalEuler").vector3Value = new Vector3(0f, 0f, 80f);
             gcSO.ApplyModifiedPropertiesWithoutUndo();
 
             // Barrier Control Panel with Allow (Green) & Deny (Red) Buttons
@@ -1367,13 +1377,15 @@ namespace NightStand.Editor
             dvSO.ApplyModifiedPropertiesWithoutUndo();
 
             // 6. Dialogue UI
-            GameObject dlgPanel = CreatePanel(canvasObj.transform, "DialoguePanel", new Vector2(0.5f, 0f), new Vector2(0f, 180f), new Vector2(820f, 300f), new Color(0.08f, 0.09f, 0.12f, 0.94f));
+            GameObject dlgPanel = CreatePanel(canvasObj.transform, "DialoguePanel", new Vector2(0.5f, 0f), new Vector2(0f, 190f), new Vector2(860f, 330f), new Color(0.08f, 0.09f, 0.12f, 0.94f));
             TMP_Text npcName = CreateTMP(dlgPanel.transform, "NPCName", "NPC", new Vector2(0f, 1f), new Vector2(220f, -35f), new Vector2(380f, 40f), 26, TextAlignmentOptions.Left);
-            TMP_Text dlgBody = CreateTMP(dlgPanel.transform, "DialogueBody", "...", new Vector2(0.5f, 1f), new Vector2(0f, -95f), new Vector2(760f, 90f), 22, TextAlignmentOptions.TopLeft);
-            Button btnIdentity = CreateButton(dlgPanel.transform, "Btn_Identity", "Ask Name / House", new Vector2(-270f, -95f), new Vector2(180f, 45f));
-            Button btnPurpose = CreateButton(dlgPanel.transform, "Btn_Purpose", "Ask Purpose", new Vector2(-80f, -95f), new Vector2(180f, 45f));
-            Button btnSuspicious = CreateButton(dlgPanel.transform, "Btn_Suspicious", "Press Suspicion", new Vector2(110f, -95f), new Vector2(180f, 45f));
-            Button btnCloseDlg = CreateButton(dlgPanel.transform, "Btn_CloseDlg", "End Talk", new Vector2(300f, -95f), new Vector2(160f, 45f));
+            TMP_Text dlgBody = CreateTMP(dlgPanel.transform, "DialogueBody", "...", new Vector2(0.5f, 1f), new Vector2(0f, -95f), new Vector2(800f, 90f), 22, TextAlignmentOptions.TopLeft);
+            Button btnIdentity = CreateButton(dlgPanel.transform, "Btn_Identity", "Ask Name / House", new Vector2(-310f, -65f), new Vector2(180f, 42f));
+            Button btnPurpose = CreateButton(dlgPanel.transform, "Btn_Purpose", "Ask Purpose", new Vector2(-105f, -65f), new Vector2(180f, 42f));
+            Button btnSuspicious = CreateButton(dlgPanel.transform, "Btn_Suspicious", "Press Suspicion", new Vector2(105f, -65f), new Vector2(180f, 42f));
+            Button btnPassAction = CreateButton(dlgPanel.transform, "Btn_PassAction", "Take Entry Pass", new Vector2(310f, -65f), new Vector2(180f, 42f));
+            Button btnCloseDlg = CreateButton(dlgPanel.transform, "Btn_CloseDlg", "End Talk", new Vector2(0f, -125f), new Vector2(180f, 40f));
+            TMP_Text passBtnTxt = btnPassAction.GetComponentInChildren<TMP_Text>();
             DialogueUI dlgUI = canvasObj.AddComponent<DialogueUI>();
             SerializedObject dlSO = new SerializedObject(dlgUI);
             dlSO.FindProperty("panelRoot").objectReferenceValue = dlgPanel;
@@ -1382,6 +1394,8 @@ namespace NightStand.Editor
             dlSO.FindProperty("askIdentityButton").objectReferenceValue = btnIdentity;
             dlSO.FindProperty("askPurposeButton").objectReferenceValue = btnPurpose;
             dlSO.FindProperty("askSuspiciousButton").objectReferenceValue = btnSuspicious;
+            dlSO.FindProperty("passActionButton").objectReferenceValue = btnPassAction;
+            dlSO.FindProperty("passActionButtonText").objectReferenceValue = passBtnTxt;
             dlSO.FindProperty("closeButton").objectReferenceValue = btnCloseDlg;
             dlSO.FindProperty("playerController").objectReferenceValue = playerController;
             dlSO.ApplyModifiedPropertiesWithoutUndo();

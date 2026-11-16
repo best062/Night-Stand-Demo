@@ -20,6 +20,8 @@ namespace NightStand.Items
         [SerializeField] private bool showCurrentVehiclePass = false;
         [SerializeField] private VehicleSpawner vehicleSpawner;
 
+        public static DocumentInteractable ActiveDeskVehiclePass { get; private set; }
+
         public string InteractionPrompt
         {
             get
@@ -35,9 +37,24 @@ namespace NightStand.Items
 
         private void Awake()
         {
-            if (showCurrentVehiclePass && vehicleSpawner == null)
+            if (showCurrentVehiclePass)
             {
-                vehicleSpawner = FindFirstObjectByType<VehicleSpawner>();
+                ActiveDeskVehiclePass = this;
+                if (vehicleSpawner == null)
+                {
+                    vehicleSpawner = FindFirstObjectByType<VehicleSpawner>();
+                }
+
+                // ซ่อนบัตรบนโต๊ะไว้ก่อนจนกว่าผู้เล่นจะไปรับบัตรจากคนขับรถ
+                gameObject.SetActive(false);
+            }
+        }
+
+        public void SetPassOnDesk(bool visible)
+        {
+            if (showCurrentVehiclePass)
+            {
+                gameObject.SetActive(visible);
             }
         }
 

@@ -1,6 +1,7 @@
 using System;
 using NightStand.Core;
 using NightStand.Data;
+using NightStand.Items;
 using TMPro;
 using UnityEngine;
 
@@ -37,12 +38,16 @@ namespace NightStand.Vehicle
         [SerializeField] private GameObject trunkBloodVisual;
         [SerializeField] private GameObject clawMarksVisual;
         [SerializeField] private GameObject redHeadlightsVisual;
+        [SerializeField] private GameObject driverHandoutPassVisual;
 
         public event Action<VehicleController> OnArrivedAtGate;
         public event Action<VehicleController> OnVehicleExited;
 
         public VehicleDataSO VehicleData { get; private set; }
         public VehicleState CurrentState { get; private set; } = VehicleState.Approaching;
+        public bool HasDriverHandedPass { get; private set; }
+        public bool HasReturnedPassToDriver { get; private set; }
+        public bool CanGateProcessDecision => HasDriverHandedPass && HasReturnedPassToDriver;
 
         // [Data Structure: Array (VehicleWaypoint[]) - Fixed-Size Inspection Waypoints]
         // Stores all 4 inspection points around the vehicle (Front, DriverWindow, BackSeat, Trunk).
@@ -93,7 +98,16 @@ namespace NightStand.Vehicle
         {
             VehicleData = data;
             CurrentState = VehicleState.Approaching;
+            HasDriverHandedPass = false;
+            HasReturnedPassToDriver = false;
             targetPosition = gateStopPoint != null ? gateStopPoint.position : transform.position;
+
+            if (driverHandoutPassVisual != null)
+            {
+                driverHandoutPassVisual.SetActive(false);
+            }
+
+            DocumentInteractable.ActiveDeskVehiclePass?.SetPassOnDesk(false);
 
             ApplyVisualData(data);
             RefreshWaypoints(currentWave, isVehicleWaiting: false);
@@ -124,6 +138,39 @@ namespace NightStand.Vehicle
         }
 
         /// <summary>
+        /// รับบัตรผ่านจากมือคนขับมาวางบนโต๊ะป้อมยาม
+        /// </summary>
+        public void TakePassFromDriver()
+        {
+            if (CurrentState != VehicleState.WaitingAtGate || HasDriverHandedPass)
+            {
+                return;
+            }
+
+            HasDriverHandedPass = true;
+            if (driverHandoutPassVisual != null)
+            {
+                driverHandoutPassVisual.SetActive(false);
+            }
+
+            DocumentInteractable.ActiveDeskVehiclePass?.SetPassOnDesk(true);
+        }
+
+        /// <summary>
+        /// คืนบัตรผ่านให้คนขับก่อนกดเปิด/ปิดไม้กั้น
+        /// </summary>
+        public void ReturnPassToDriver()
+        {
+            if (CurrentState != VehicleState.WaitingAtGate || !HasDriverHandedPass || HasReturnedPassToDriver)
+            {
+                return;
+            }
+
+            HasReturnedPassToDriver = true;
+            DocumentInteractable.ActiveDeskVehiclePass?.SetPassOnDesk(false);
+        }
+
+        /// <summary>
         /// ลบรถออกจากฉากทันทีหลังจากถูก Eliminator กำจัด (เพื่อแจ้ง VehicleSpawner ให้เรียกรถคันถัดไป)
         /// </summary>
         public void EliminateAndRemove()
@@ -134,6 +181,7 @@ namespace NightStand.Vehicle
             }
 
             CurrentState = VehicleState.Exited;
+            DocumentInteractable.ActiveDeskVehiclePass?.SetPassOnDesk(false);
             RefreshWaypoints(GetCurrentWave(), isVehicleWaiting: false);
             OnVehicleExited?.Invoke(this);
             Destroy(gameObject);
@@ -144,6 +192,10 @@ namespace NightStand.Vehicle
             if (CurrentState == VehicleState.Approaching)
             {
                 CurrentState = VehicleState.WaitingAtGate;
+                if (driverHandoutPassVisual != null)
+                {
+                    driverHandoutPassVisual.SetActive(true);
+                }
                 RefreshWaypoints(GetCurrentWave(), isVehicleWaiting: true);
                 OnArrivedAtGate?.Invoke(this);
             }

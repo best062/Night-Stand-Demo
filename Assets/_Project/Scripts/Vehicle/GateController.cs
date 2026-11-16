@@ -17,7 +17,7 @@ namespace NightStand.Vehicle
         [Header("Barrier Arm Visual (Optional)")]
         [SerializeField] private Transform barrierArm;
         [SerializeField] private Vector3 closedLocalEuler = Vector3.zero;
-        [SerializeField] private Vector3 openLocalEuler = new Vector3(0f, 0f, -80f);
+        [SerializeField] private Vector3 openLocalEuler = new Vector3(0f, 0f, 80f);
         [SerializeField] private float barrierRotateSpeed = 180f;
 
         private bool isBarrierOpen;
@@ -45,10 +45,17 @@ namespace NightStand.Vehicle
             );
         }
 
-        public void AllowCurrentVehicle()
+        public void AllowCurrentVehicle() => AllowCurrentVehicle(bypassPassCheck: false);
+
+        public void AllowCurrentVehicle(bool bypassPassCheck)
         {
             VehicleController vehicle = GetWaitingVehicle();
             if (vehicle == null)
+            {
+                return;
+            }
+
+            if (!bypassPassCheck && !ValidatePassReturned(vehicle))
             {
                 return;
             }
@@ -68,10 +75,17 @@ namespace NightStand.Vehicle
             vehicle.AllowPass(exitPoint);
         }
 
-        public void DenyCurrentVehicle()
+        public void DenyCurrentVehicle() => DenyCurrentVehicle(bypassPassCheck: false);
+
+        public void DenyCurrentVehicle(bool bypassPassCheck)
         {
             VehicleController vehicle = GetWaitingVehicle();
             if (vehicle == null)
+            {
+                return;
+            }
+
+            if (!bypassPassCheck && !ValidatePassReturned(vehicle))
             {
                 return;
             }
@@ -83,6 +97,22 @@ namespace NightStand.Vehicle
 
             isBarrierOpen = false;
             vehicle.DenyEntry(returnPoint);
+        }
+
+        private bool ValidatePassReturned(VehicleController vehicle)
+        {
+            if (vehicle.CanGateProcessDecision)
+            {
+                return true;
+            }
+
+            string msg = !vehicle.HasDriverHandedPass
+                ? "Take the driver's entry pass at the window first!"
+                : "Return the entry pass to the driver before opening/closing the gate!";
+
+            Debug.Log($"[GateController] {msg}");
+            AIPartnerManager.Instance?.ShowSystemNotice(msg);
+            return false;
         }
 
         private VehicleController GetWaitingVehicle()

@@ -176,6 +176,14 @@ namespace NightStand.Core
             return completedQuestIds.Contains(questId);
         }
 
+        public void ShowSystemNotice(string message)
+        {
+            if (!string.IsNullOrWhiteSpace(message))
+            {
+                OnPartnerMessage?.Invoke(message);
+            }
+        }
+
         private void HandleWaveChanged(GameWave newWave)
         {
             TriggerSideQuestForWave(newWave);

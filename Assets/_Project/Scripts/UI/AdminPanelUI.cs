@@ -131,8 +131,8 @@ namespace NightStand.UI
             AddActionButton("Spawn Normal (Valid)", () => vehicleSpawner?.AdminSpawnVehicleOfStatus(NPCStatus.Normal_Valid));
             AddActionButton("Spawn Normal (Invalid)", () => vehicleSpawner?.AdminSpawnVehicleOfStatus(NPCStatus.Normal_Invalid));
             AddActionButton("Spawn Anomaly", () => vehicleSpawner?.AdminSpawnVehicleOfStatus(NPCStatus.Anomaly));
-            AddActionButton("Force Allow Gate", () => gateController?.AllowCurrentVehicle());
-            AddActionButton("Force Deny Gate", () => gateController?.DenyCurrentVehicle());
+            AddActionButton("Force Allow Gate", () => gateController?.AllowCurrentVehicle(bypassPassCheck: true));
+            AddActionButton("Force Deny Gate", () => gateController?.DenyCurrentVehicle(bypassPassCheck: true));
 
             // Equipment & Quests
             AddActionButton("Unlock All Gear", UnlockAllEquipment);
